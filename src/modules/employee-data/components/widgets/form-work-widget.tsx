@@ -1,15 +1,15 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { FormOwn } from "../ui/form-own";
+import { FormWork } from "../ui/form-work";
 
-export default function FormOwnWidget({
+export default function FormWorkWidget({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   return (
     <>
-      <FormOwn className={cn("w-full", className)} />
+      <FormWork className={cn("w-full", className)} />
     </>
   );
 }

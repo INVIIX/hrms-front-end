@@ -27,83 +27,58 @@ import {
 } from "@/components/ui/select";
 
 const formSchema = z.object({
-  nik: z
+  nip: z
     .string()
-    .regex(/^\d+$/, "NIK hanya boleh angka")
-    .length(16, "NIK harus 16 digit"),
-  ktp: z
+    .regex(/^\d+$/, "NIP hanya boleh angka")
+    .length(16, "NIP harus 16 digit"),
+  hire_date: z.string().min(1, "Tanggal penerimaan wajib diisi"),
+  jenis_karyawan: z
     .string()
-    .regex(/^\d+$/, "KTP hanya boleh angka")
-    .length(16, "KTP harus 16 digit"),
-  npwp: z
+    .refine((val) => ["tetap", "pkwt", "magang"].includes(val), {
+      message: "Jenis karyawan harap diisi",
+    }),
+  status_kepegawaian: z
     .string()
-    .regex(/^\d+$/, "NPWP hanya boleh angka")
-    .length(16, "NPWP harus 16 digit"),
-  nama_lengkap: z.string().min(1, "Nama lengkap wajib diisi"),
-  gender: z.string().refine((val) => ["male", "female"].includes(val), {
-    message: "Gender must be male or female",
+    .refine((val) => ["aktif", "cuti", "resign", "terminated"].includes(val), {
+      message: "Status kepegawaian",
+    }),
+  department: z.string().refine((val) => ["A", "B"].includes(val), {
+    message: "Department",
   }),
-  tempat_tanggal_lahir: z.string().min(1, "Tempat, tanggal lahir wajib diisi"),
-  alamat_tinggal: z.string(),
-  alamat_ktp: z.string(),
-  status_pernikahan: z
+  start_date: z.string().min(1, "Tanggal awal harus diisi"),
+  end_date: z.string().min(1, "Tanggal akhir harus diisi"),
+  location: z.string().min(1, "Lokasi kerja harus diisi"),
+  first_line_manager: z.string().min(1, "Atasan langsung harus diisi"),
+  no_sk_kontrak: z
     .string()
-    .refine(
-      (val) =>
-        ["belum_kawin", "kawin", "cerai_hidup", "cerai_mati"].includes(val),
-      {
-        message: "Gender must be male or female",
-      }
-    ),
-  agama: z
+    .regex(/^\d+$/, "NO SK hanya boleh angka")
+    .length(16, "NO SK harus 16 digit"),
+  no_sk_jabatan: z
     .string()
-    .refine(
-      (val) =>
-        [
-          "islam",
-          "kristen_protestan",
-          "kristen_katolik",
-          "hindu",
-          "budha",
-          "khonghucu",
-          "lainnya",
-        ].includes(val),
-      {
-        message: "Gender must be male or female",
-      }
-    ),
-  kewarganegaraan: z.string().refine((val) => ["wni", "wna"].includes(val), {
-    message: "Gender must be male or female",
-  }),
-  bpjs_kesehatan: z
-    .string()
-    .regex(/^\d+$/, "NO BPJS hanya boleh angka")
-    .length(16, "NO BPJS harus 16 digit"),
-  bpjs_ketenagakerjaan: z
-    .string()
-    .regex(/^\d+$/, "NO BPJS hanya boleh angka")
-    .length(16, "NO BPJS harus 16 digit"),
+    .regex(/^\d+$/, "NO SK hanya boleh angka")
+    .length(16, "NO SK harus 16 digit"),
 });
 
-export function FormOwn({ className, ...props }: React.ComponentProps<"form">) {
+export function FormWork({
+  className,
+  ...props
+}: React.ComponentProps<"form">) {
   const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      nik: "",
-      ktp: "",
-      npwp: "",
-      nama_lengkap: "",
-      gender: "male",
-      tempat_tanggal_lahir: "",
-      alamat_tinggal: "",
-      alamat_ktp: "",
-      status_pernikahan: "",
-      agama: "",
-      kewarganegaraan: "",
-      bpjs_kesehatan: "",
-      bpjs_ketenagakerjaan: "",
+      nip: "",
+      hire_date: "",
+      jenis_karyawan: "tetap",
+      status_kepegawaian: "aktif",
+      department: "A",
+      start_date: "",
+      end_date: "",
+      location: "",
+      first_line_manager: "",
+      no_sk_kontrak: "",
+      no_sk_jabatan: "",
     },
   });
 
@@ -135,10 +110,10 @@ export function FormOwn({ className, ...props }: React.ComponentProps<"form">) {
             <div className="flex gap-3">
               <FormField
                 control={form.control}
-                name="nik"
+                name="nip"
                 render={({ field }) => (
                   <FormItem className="flex-1">
-                    <FormLabel>NIK*</FormLabel>
+                    <FormLabel>NIP*</FormLabel>
                     <FormControl>
                       <Input
                         type="text"
@@ -159,21 +134,15 @@ export function FormOwn({ className, ...props }: React.ComponentProps<"form">) {
               />
               <FormField
                 control={form.control}
-                name="ktp"
+                name="hire_date"
                 render={({ field }) => (
                   <FormItem className="flex-1">
-                    <FormLabel>No. KTP / Passport*</FormLabel>
+                    <FormLabel>Hire Date*</FormLabel>
                     <FormControl>
                       <Input
-                        type="text"
-                        placeholder="eg. 0000000000000000"
+                        type="date"
+                        placeholder="text"
                         {...field}
-                        inputMode="numeric"
-                        maxLength={16}
-                        onChange={(e) => {
-                          const value = e.target.value.replace(/\D/g, "");
-                          field.onChange(value);
-                        }}
                         readOnly={isSubmitting}
                       />
                     </FormControl>
@@ -183,21 +152,116 @@ export function FormOwn({ className, ...props }: React.ComponentProps<"form">) {
               />
               <FormField
                 control={form.control}
-                name="npwp"
+                name="jenis_karyawan"
                 render={({ field }) => (
                   <FormItem className="flex-1">
-                    <FormLabel>No. NPWP*</FormLabel>
+                    <FormLabel>Jenis Karyawan*</FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        disabled={isSubmitting}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Pilih jenis karyawan" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="tetap">Tetap</SelectItem>
+                          <SelectItem value="pkwt">PKWT</SelectItem>
+                          <SelectItem value="magang">Magang</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="flex gap-3">
+              <FormField
+                control={form.control}
+                name="status_kepegawaian"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>Status Kepegawaian</FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        disabled={isSubmitting}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Pilih status kepegawaian" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="aktif">Aktif</SelectItem>
+                          <SelectItem value="cuti">Cuti</SelectItem>
+                          <SelectItem value="resign">Resign</SelectItem>
+                          <SelectItem value="terminated">Terminated</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="department"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>Department*</FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        disabled={isSubmitting}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Pilih department" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="A">A Level</SelectItem>
+                          <SelectItem value="B">B Level</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="flex-1"></div>
+            </div>
+            <div className="flex gap-3">
+              <FormField
+                control={form.control}
+                name="start_date"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>Start Date*</FormLabel>
                     <FormControl>
                       <Input
-                        type="text"
-                        placeholder="eg. 0000000000000000"
+                        type="date"
+                        placeholder="text"
                         {...field}
-                        inputMode="numeric"
-                        maxLength={16}
-                        onChange={(e) => {
-                          const value = e.target.value.replace(/\D/g, "");
-                          field.onChange(value);
-                        }}
+                        readOnly={isSubmitting}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="end_date"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>End Date*</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="date"
+                        placeholder="text"
+                        {...field}
                         readOnly={isSubmitting}
                       />
                     </FormControl>
@@ -209,10 +273,28 @@ export function FormOwn({ className, ...props }: React.ComponentProps<"form">) {
             <div className="flex gap-3">
               <FormField
                 control={form.control}
-                name="nama_lengkap"
+                name="location"
                 render={({ field }) => (
                   <FormItem className="flex-1">
-                    <FormLabel>Nama Lengkap*</FormLabel>
+                    <FormLabel>Lokasi Kerja*</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        placeholder="eg. Jl. Musho..."
+                        {...field}
+                        readOnly={isSubmitting}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="first_line_manager"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>First Line Manager*</FormLabel>
                     <FormControl>
                       <Input
                         type="text"
@@ -225,187 +307,14 @@ export function FormOwn({ className, ...props }: React.ComponentProps<"form">) {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="gender"
-                render={({ field }) => (
-                  <FormItem className="flex-1">
-                    <FormLabel>Jenis Kelamin</FormLabel>
-                    <FormControl>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                        disabled={isSubmitting}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Pilih jenis kelamin" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="male">Laki-laki</SelectItem>
-                          <SelectItem value="female">Perempuan</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </div>
             <div className="flex gap-3">
               <FormField
                 control={form.control}
-                name="tempat_tanggal_lahir"
+                name="no_sk_kontrak"
                 render={({ field }) => (
                   <FormItem className="flex-1">
-                    <FormLabel>Tempat, Tanggal Lahir*</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="text"
-                        placeholder="eg. Jakarta, 21 Juli 1950"
-                        {...field}
-                        readOnly={isSubmitting}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="alamat_tinggal"
-                render={({ field }) => (
-                  <FormItem className="flex-1">
-                    <FormLabel>Alamat Tempat Tinggal*</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="text"
-                        placeholder="eg. Jl. Musho..."
-                        {...field}
-                        readOnly={isSubmitting}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="alamat_ktp"
-                render={({ field }) => (
-                  <FormItem className="flex-1">
-                    <FormLabel>Alamat KTP*</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="text"
-                        placeholder="eg. Jl. Musho..."
-                        {...field}
-                        readOnly={isSubmitting}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="flex gap-3">
-              <FormField
-                control={form.control}
-                name="status_pernikahan"
-                render={({ field }) => (
-                  <FormItem className="flex-1">
-                    <FormLabel>Status Pernikahan*</FormLabel>
-                    <FormControl>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                        disabled={isSubmitting}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Pilih status pernikahan" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="belum_kawin">
-                            Belum Kawin
-                          </SelectItem>
-                          <SelectItem value="kawin">Kawin</SelectItem>
-                          <SelectItem value="cerai_hidup">
-                            Cerai Hidup
-                          </SelectItem>
-                          <SelectItem value="cerai_mati">Cerai Mati</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="agama"
-                render={({ field }) => (
-                  <FormItem className="flex-1">
-                    <FormLabel>Agama*</FormLabel>
-                    <FormControl>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                        disabled={isSubmitting}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Pilih agama" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Islam">Islam</SelectItem>
-                          <SelectItem value="kristen_protestan">
-                            Kristen Protestan
-                          </SelectItem>
-                          <SelectItem value="kristen_katolik">
-                            Kristen Katolik
-                          </SelectItem>
-                          <SelectItem value="hindu">Hindu</SelectItem>
-                          <SelectItem value="budha">Budha</SelectItem>
-                          <SelectItem value="khonghucu">Khonghucu</SelectItem>
-                          <SelectItem value="lainnya">Lainnya</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="kewarganegaraan"
-                render={({ field }) => (
-                  <FormItem className="flex-1">
-                    <FormLabel>Kewarganegaraan*</FormLabel>
-                    <FormControl>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                        disabled={isSubmitting}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Pilih kewarganegaraan" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="wni">WNI</SelectItem>
-                          <SelectItem value="wna">WNA</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="flex gap-3">
-              <FormField
-                control={form.control}
-                name="bpjs_kesehatan"
-                render={({ field }) => (
-                  <FormItem className="flex-1">
-                    <FormLabel>No. BPJS Kesehatan*</FormLabel>
+                    <FormLabel>No. SK Kontrak*</FormLabel>
                     <FormControl>
                       <Input
                         type="text"
@@ -426,10 +335,10 @@ export function FormOwn({ className, ...props }: React.ComponentProps<"form">) {
               />
               <FormField
                 control={form.control}
-                name="bpjs_ketenagakerjaan"
+                name="no_sk_jabatan"
                 render={({ field }) => (
                   <FormItem className="flex-1">
-                    <FormLabel>No. BPJS Ketenagakerjaan*</FormLabel>
+                    <FormLabel>No. SK Jabatan / Gaji*</FormLabel>
                     <FormControl>
                       <Input
                         type="text"
@@ -449,6 +358,7 @@ export function FormOwn({ className, ...props }: React.ComponentProps<"form">) {
                 )}
               />
             </div>
+
             {/* <FormField
                             control={form.control}
                             name="name"

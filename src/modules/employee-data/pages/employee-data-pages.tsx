@@ -24,7 +24,10 @@ import { FaFileExcel } from "react-icons/fa6";
 import DragAndDropUpload from "../components/ui/drag-drop";
 import { TabsWidget } from "../components/widgets/tabs-widget";
 import { WizardWidget } from "../components/widgets/wizard-widget";
-import Registered from "../components/widgets/form-own-widget";
+import FormOwnWidget from "../components/widgets/form-own-widget";
+import FormWorkWidget from "../components/widgets/form-work-widget";
+import FormSalariWidget from "../components/widgets/form-salari-widget";
+import FormEducationWidget from "../components/widgets/form-education-widget";
 
 type TUser = {
   id: number;
@@ -431,12 +434,12 @@ export default function EmployeeData() {
   const { columns } = getTableDataAndColumns(active);
 
   const steps = [
-    { title: "Data Pribadi", content: <Registered /> },
-    { title: "Data Pekerjaan", content: "Step two content here" },
-    { title: "Gaji dan Tunjangan", content: "Step three content here" },
+    { title: "Data Pribadi", content: <FormOwnWidget /> },
+    { title: "Data Pekerjaan", content: <FormWorkWidget /> },
+    { title: "Gaji dan Tunjangan", content: <FormSalariWidget /> },
     {
       title: "Riwayat Pendidikan dan Pelatihan",
-      content: "Step three content here",
+      content: <FormEducationWidget />,
     },
   ];
 
