@@ -37,8 +37,8 @@ export default function GeneralModal({
         className={`bg-white rounded-lg shadow-lg w-full ${sizeClasses[size]}`}
       >
         {title && (
-          <div className="border-b px-4 py-2 text-lg font-semibold flex justify-between items-center">
-            <div className="flex flex-col">
+          <div className="border-b dark:border-gray-200 px-4 py-2 text-lg font-semibold flex justify-between items-center">
+            <div className="flex flex-col dark:text-gray-800">
               <span>{title}</span>
               <span className="font-medium text-sm text-gray-600">{desc}</span>
             </div>

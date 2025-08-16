@@ -29,7 +29,7 @@ const AnalyticsCardList: React.FC<AnalyticsCardListProps> = ({ analytics }) => (
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <div className="mr-3">
-                <div className="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gray-600 shadow">
+                <div className="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gray-600 dark:bg-blue-500 shadow">
                   {item.icon}
                 </div>
               </div>

@@ -127,6 +127,7 @@ export function FormOwn({ className, ...props }: React.ComponentProps<"form">) {
     <>
       <Form {...form}>
         <form
+          id="ownForm"
           onSubmit={handleSubmit(onSubmit)}
           className={cn("w-full flex flex-col", className)}
           {...props}

@@ -5,6 +5,8 @@ import AuthenticatedRoute from './modules/auth/components/context/authenticated-
 import GuestRoute from "./modules/auth/components/context/guest-route.tsx";
 import UserManagement from "./modules/users-management/pages/users-management-page.tsx";
 import EmployeeData from "./modules/employee-data/pages/employee-data-pages.tsx";
+import ReportingLines from "./modules/reporting-lines/pages/reporting-lines-page.tsx";
+import GroupManagement from "./modules/group-management/pages/group-management-page.tsx";
 
 const AuthLayout = lazy(() => import('./components/layouts/auth/auth-layout.tsx'));
 const PanelLayout = lazy(() => import('./components/layouts/panel/panel-layout.tsx'));
@@ -34,6 +36,8 @@ export default function AppRoutes() {
                     <Route index element={<DashboardPage />} />
                     <Route path="users" element={<UserManagement />} />
                     <Route path="employee" element={<EmployeeData />} />
+                    <Route path="lines" element={<ReportingLines />} />
+                    <Route path="group" element={<GroupManagement />} />
                     <Route path="me" element={<AuthProfilePage />} />
                     <Route path="settings">
                         <Route path="users" element={<UserIndexPage />} />

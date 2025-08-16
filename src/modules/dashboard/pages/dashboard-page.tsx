@@ -117,7 +117,7 @@ export default function DashboardPage() {
                       {item.label}
                     </span>
                   </div>
-                  <span className="font-semibold text-gray-900 dark:text-white bg-gray-200 px-2 rounded-md">
+                  <span className="font-medium text-sm text-gray-900 dark:text-gray-800 bg-gray-200 px-2 rounded-md">
                     <Counter
                       value={item.value}
                       decimals={0}
@@ -149,7 +149,7 @@ export default function DashboardPage() {
                   <div className="flex items-center gap-5">
                     {item.icon}
                     <div className="flex flex-col">
-                      <span className="text-md font-semibold text-gray-700 dark:text-gray-200">
+                      <span className="text-md font-semibold text-gray-700 dark:text-gray-800">
                         {item.label}
                       </span>
                       <span className="text-sm text-gray-500 dark:text-gray-400">

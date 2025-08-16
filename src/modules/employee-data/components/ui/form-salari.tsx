@@ -104,6 +104,7 @@ export function FormSalari({
     <>
       <Form {...form}>
         <form
+          id="salariForm"
           onSubmit={handleSubmit(onSubmit)}
           className={cn("w-full flex flex-col", className)}
           {...props}

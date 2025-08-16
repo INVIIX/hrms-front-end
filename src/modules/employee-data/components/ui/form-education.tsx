@@ -165,6 +165,7 @@ export function FormEducation({
     <>
       <Form {...form}>
         <form
+          id="educationForm"
           onSubmit={handleSubmit(onSubmit)}
           className={cn("w-full flex flex-col", className)}
           {...props}
@@ -179,7 +180,7 @@ export function FormEducation({
                 {savedEducations.map((edu, i) => (
                   <div
                     key={i}
-                    className="p-3 rounded-md bg-gray-50 text-sm flex justify-between items-center"
+                    className="p-3 rounded-md bg-gray-50 text-sm flex justify-between items-center dark:text-gray-800"
                   >
                     <div>
                       <div className="font-semibold text-lg">
@@ -215,7 +216,7 @@ export function FormEducation({
 
             {educationFields.map((field, index) => (
               <div key={field.id} className="space-y-5">
-                <div className="font-semibold text-sm w-fit py-1 rounded-md items-center">
+                <div className="font-semibold text-sm w-fit py-1 rounded-md items-center dark:text-gray-800">
                   Add New Educations
                 </div>
 
@@ -301,7 +302,7 @@ export function FormEducation({
 
                 <div className="flex items-center justify-end gap-2">
                   <button
-                    className="bg-gray-200 hover:bg-gray-400 text-sm px-4 py-2 w-32 rounded-md"
+                    className="bg-gray-300 hover:bg-gray-500 text-sm px-4 py-2 w-32 rounded-md"
                     onClick={() => removeEducation(index)}
                   >
                     Cancle
@@ -342,7 +343,7 @@ export function FormEducation({
                 {savedCertifications.map((cert, i) => (
                   <div
                     key={i}
-                    className="p-3 rounded-md bg-gray-50 text-sm flex justify-between items-center"
+                    className="p-3 rounded-md bg-gray-50 text-sm flex justify-between items-center dark:text-gray-800"
                   >
                     <div>
                       <div className="font-semibold text-lg">
@@ -378,7 +379,7 @@ export function FormEducation({
 
             {certificationFields.map((field, index) => (
               <div key={field.id} className="space-y-5">
-                <div className="font-semibold text-sm w-fit py-1 rounded-md items-center">
+                <div className="font-semibold text-sm w-fit py-1 rounded-md items-center dark:text-gray-800">
                   Add New Certification
                 </div>
 
@@ -405,7 +406,9 @@ export function FormEducation({
 
                 <div className="flex gap-3">
                   <div className="flex flex-col w-full">
-                    <span className="text-sm mb-4">Upload Sertifikat</span>
+                    <span className="text-sm mb-4 dark:text-gray-800">
+                      Upload Sertifikat
+                    </span>
                     <DragAndDropUpload
                       supportedFormats=".JPG, .PNG, .PDF, .DOCX"
                       onFileSelect={(file) => console.log("File:", file)}
@@ -474,7 +477,7 @@ export function FormEducation({
 
                 <div className="flex items-center justify-end gap-2">
                   <button
-                    className="bg-gray-200 hover:bg-gray-400 text-sm px-4 py-2 w-32 rounded-md"
+                    className="bg-gray-300 hover:bg-gray-500 text-sm px-4 py-2 w-32 rounded-md"
                     onClick={() => removeCertification(index)}
                   >
                     Cancle

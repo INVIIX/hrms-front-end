@@ -14,7 +14,7 @@ const SectionTitleWithDesc: React.FC<SectionTitleWithDescProps> = ({
   className = "",
 }) => (
   <div className={className}>
-    <span className="text-2md font-semibold text-dark bg-gray-100 me-2 px-2.5 py-0.5 rounded-md flex items-center gap-2 w-fit capitalize">
+    <span className="text-sm font-medium text-dark bg-gray-100 dark:text-gray-800 me-2 px-2.5 py-0.5 rounded-md flex items-center gap-2 w-fit capitalize">
       {icon && <span className="inline-flex">{icon}</span>}
       {title}
     </span>

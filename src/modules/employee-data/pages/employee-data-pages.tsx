@@ -487,13 +487,13 @@ export default function EmployeeData() {
                   modalType === "import" ? (
                     <>
                       <button
-                        className="bg-gray-200 text-sm px-4 py-2 w-32 rounded-md"
+                        className="bg-gray-300 hover:bg-gray-500 text-sm px-4 py-2 w-32 rounded-md"
                         onClick={() => setIsOpen(false)}
                       >
                         Cancel
                       </button>
                       <button
-                        className="bg-black text-white text-sm px-4 py-2 w-32 rounded-md"
+                        className="bg-gray-800 hover:bg-gray-600 text-white text-sm px-4 py-2 w-32 rounded-md"
                         // onClick={handleImportSubmit}
                       >
                         Import
@@ -510,7 +510,7 @@ export default function EmployeeData() {
                 {modalType === "import" && (
                   <div className="flex flex-col p-4">
                     <div className="mb-4">
-                      <span className="text-sm">
+                      <span className="text-sm dark:text-gray-800">
                         Please download our template to setup batch import.
                       </span>
                       <Card className="mt-2 p-4 w-fit gap-2 rounded-md">
@@ -527,7 +527,7 @@ export default function EmployeeData() {
                         </div>
                       </Card>
                     </div>
-                    <span className="text-sm mb-4">
+                    <span className="text-sm mb-4 dark:text-gray-800">
                       Already setup batch import? Please upload the file below.
                     </span>
                     <DragAndDropUpload

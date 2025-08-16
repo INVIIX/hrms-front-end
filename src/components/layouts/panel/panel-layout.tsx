@@ -5,11 +5,14 @@ import {
 } from "@/components/ui/sidebar";
 import { Outlet, useLocation } from "react-router";
 import { PanelSidebar } from "./panel-sidebar";
-import { HiOutlineLocationMarker } from "react-icons/hi";
+import {
+  HiOutlineLocationMarker,
+  HiOutlineSun,
+  HiOutlineMoon,
+} from "react-icons/hi";
 
 import { Separator } from "@/components/ui/separator";
 
-// import { NavUser } from "@/modules/auth/components/ui/nav-user";
 import { PanelBreadcrumbs } from "./panel-breadcrumbs";
 import { useBreadcrumbs } from "@/components/context/breadcrumb-context";
 import { useEffect, useState } from "react";
@@ -46,7 +49,7 @@ export default function PanelLayout() {
                 </span>
               </div>
               <div className="sm:flex flex-col leading-tight ms-5 hidden">
-                <span className="text-sm bg-green-500 px-2 rounded-md text-white">
+                <span className="text-sm bg-green-500 px-2 rounded-md text-white dark:bg-blue-500">
                   {user?.role == "0"
                     ? "Superadmin"
                     : user?.role == "1"
@@ -57,8 +60,16 @@ export default function PanelLayout() {
             </div>
             <div className="ml-auto px-4">
               <PWABadge />
-              {/* <NavUser /> */}
               <div className="flex items-center gap-2 justify-center">
+                <button
+                  onClick={() => {
+                    document.documentElement.classList.toggle("dark");
+                  }}
+                  className="p-2 rounded-md bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600"
+                >
+                  <HiOutlineSun className="hidden dark:block w-4 h-4 text-yellow-400" />
+                  <HiOutlineMoon className="block dark:hidden w-4 h-4 text-gray-800" />
+                </button>
                 <HiOutlineLocationMarker className="w-4 h-4 text-gray-500 dark:text-gray-300" />
                 <span className="text-sm">Office, South Jakarta</span>
               </div>
