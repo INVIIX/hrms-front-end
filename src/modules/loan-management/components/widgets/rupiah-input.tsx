@@ -4,6 +4,7 @@ import { formatRupiah } from "../../../../lib/format";
 
 type RupiahInputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   onValueChange?: (value: string) => void;
+  value?: string;
 };
 
 export const RupiahInput = forwardRef<HTMLInputElement, RupiahInputProps>(

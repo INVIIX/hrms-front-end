@@ -8,7 +8,7 @@ type DecimalInputProps = React.InputHTMLAttributes<HTMLInputElement> & {
 
 export const DecimalInput = forwardRef<HTMLInputElement, DecimalInputProps>(
   ({ onValueChange, value: propValue, ...props }, ref) => {
-    const [displayValue, setDisplayValue] = useState(propValue || "");
+    const [displayValue, setDisplayValue] = useState<string>(propValue || "");
     const [, setRawValue] = useState<number | null>(null);
 
     useEffect(() => {
@@ -20,7 +20,7 @@ export const DecimalInput = forwardRef<HTMLInputElement, DecimalInputProps>(
     }, [propValue]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      let val = String(e.target.value).replace(/\D/g, "");
+      let val = e.target.value.replace(/\D/g, "");
       if (val.length === 1) {
         val = "" + val;
       } else {
