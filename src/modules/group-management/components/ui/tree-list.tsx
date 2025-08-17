@@ -26,7 +26,7 @@ function TreeItem({
   return (
     <div className="ml-4">
       <div
-        className="flex items-center gap-2 cursor-pointer hover:bg-gray-100 rounded px-2 py-1"
+        className="flex items-center gap-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-900 rounded px-2 py-1"
         onClick={() => {
           if (hasChildren) setExpanded(!expanded);
           if (onSelect) onSelect(node);
@@ -44,7 +44,7 @@ function TreeItem({
 
         <Folder size={16} className="text-gray-500" />
         <span className="text-sm">{node.name}</span>
-        <span className="ml-2 text-xs bg-gray-200 rounded-full px-2">
+        <span className="ml-2 text-xs bg-gray-200 rounded-full px-2 dark:text-gray-800">
           {node.count}
         </span>
       </div>
