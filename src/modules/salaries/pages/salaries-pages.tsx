@@ -1,6 +1,6 @@
 import TitleHeader from "@/components/commons/title-header";
 import { MdOutlineDataUsage } from "react-icons/md";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import DataTable, {
   ColumnsFilterOptionsType,
 } from "@/components/commons/data-table/data-table";
@@ -23,6 +23,9 @@ import { Tab } from "../components/ui/tabs";
 import ContentChart from "../components/ui/content-chart";
 import GeneralModal from "@/components/commons/general-modal";
 import { Input } from "@/components/ui/input";
+import CameraView, {
+  CameraViewHandle,
+} from "../components/widgets/camera-access";
 
 type TUser = {
   id: number;
@@ -41,6 +44,8 @@ export default function Salaries() {
   const [, setModalType] = useState<"import" | "new" | "password" | null>(null);
   const [showValues, setShowValues] = useState(false);
   const [passwordInput, setPasswordInput] = useState("");
+  const [phase, setPhase] = useState<"password" | "camera">("password");
+  const cameraRef = useRef<CameraViewHandle>(null);
 
   const reloadData = () => {
     queryClient.invalidateQueries({ queryKey: [apiEndpoint] });
@@ -188,6 +193,23 @@ export default function Salaries() {
     return null;
   }
 
+  const handlePasswordConfirm = () => {
+    if (passwordInput === "12345678") {
+      setPhase("camera");
+    } else {
+      toast.error("Incorrect password!");
+    }
+  };
+
+  const handleCameraConfirm = () => {
+    setShowValues(true);
+    setPhase("password");
+    setTimeout(() => {
+      setIsOpen(false);
+      setPasswordInput("");
+    }, 100);
+  };
+
   return (
     <div>
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-5">
@@ -223,22 +245,50 @@ export default function Salaries() {
 
               <GeneralModal
                 isOpen={isOpen}
-                onClose={() => setIsOpen(false)}
+                onClose={() => {
+                  setIsOpen(false);
+                  setPasswordInput("");
+                  setPhase("password");
+                }}
                 size="md"
-                title="Enter your password"
-                desc="Type your user password to show the data"
+                title={
+                  phase === "password"
+                    ? "Enter your password"
+                    : "Camera Verification"
+                }
+                desc={
+                  phase === "password"
+                    ? "Type your user password to continue"
+                    : "Use your camera to verify before showing data"
+                }
                 footer={
                   <>
                     <button
-                      className="bg-gray-300 hover:bg-gray-500 text-sm px-4 py-2 w-32 rounded-md"
+                      className="bg-gray-300 hover:bg-gray-500 text-sm px-4 py-2 rounded-md"
                       onClick={() => {
                         setPasswordInput("");
                         setIsOpen(false);
+                        setPhase("password");
                       }}
                     >
                       Cancel
                     </button>
-                    <button
+                    {phase === "password" ? (
+                      <button
+                        className="bg-gray-800 hover:bg-gray-600 text-white text-sm px-4 py-2 rounded-md"
+                        onClick={handlePasswordConfirm}
+                      >
+                        Confirm
+                      </button>
+                    ) : (
+                      <button
+                        className="bg-gray-800 hover:bg-gray-600 text-white text-sm px-4 py-2 rounded-md"
+                        onClick={handleCameraConfirm}
+                      >
+                        Confirm
+                      </button>
+                    )}
+                    {/* <button
                       className="bg-gray-800 hover:bg-gray-600 text-white text-sm px-4 py-2 w-32 rounded-md"
                       onClick={() => {
                         if (passwordInput === "12345678") {
@@ -251,18 +301,26 @@ export default function Salaries() {
                       }}
                     >
                       Confirm
-                    </button>
+                    </button> */}
                   </>
                 }
               >
-                <div className="flex flex-col p-4">
-                  <Input
-                    type="password"
-                    placeholder="Type your password"
-                    value={passwordInput}
-                    onChange={(e) => setPasswordInput(e.target.value)}
-                  />
-                </div>
+                {phase === "password" ? (
+                  <div className="flex flex-col p-4">
+                    <Input
+                      type="password"
+                      placeholder="Type your password"
+                      value={passwordInput}
+                      onChange={(e) => setPasswordInput(e.target.value)}
+                    />
+                  </div>
+                ) : (
+                  <div className="flex flex-col p-4 items-center">
+                    <div className="w-full h-80 flex items-center justify-center">
+                      <CameraView ref={cameraRef} active={phase === "camera"} />
+                    </div>
+                  </div>
+                )}
               </GeneralModal>
             </div>
           </div>

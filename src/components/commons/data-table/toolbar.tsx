@@ -1,37 +1,39 @@
-"use client"
+"use client";
 
-import { Table } from "@tanstack/react-table"
+import { Table } from "@tanstack/react-table";
 // import { X } from "lucide-react"
 
 // import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Input } from "@/components/ui/input";
 // import { FacetedFilter } from "./faceted-filter"
-import { ViewOptions } from "./view-options"
-import { SelectedActions } from "./selected-actions"
-import { ColumnsFilterOptionsType } from "./data-table"
+import { ViewOptions } from "./view-options";
+import { SelectedActions } from "./selected-actions";
+import { ColumnsFilterOptionsType } from "./data-table";
 
 interface ToolbarProps<TData> {
-    table: Table<TData>
-    columnsFilterOptions?: ColumnsFilterOptionsType
+  table: Table<TData>;
+  columnsFilterOptions?: ColumnsFilterOptionsType;
+  rightContent?: React.ReactNode;
 }
 
 export function Toolbar<TData>({
-    table,
-    // columnsFilterOptions = undefined
-}: ToolbarProps<TData>) {
-    // const isFiltered = table.getState().columnFilters.length > 0
+  table,
+  rightContent,
+}: // columnsFilterOptions = undefined
+ToolbarProps<TData>) {
+  // const isFiltered = table.getState().columnFilters.length > 0
 
-    return (
-        <div className="flex items-center justify-between flex-wrap gap-2">
-            <div className="flex flex-1 items-center space-x-2">
-                <Input
-                    placeholder="Search..."
-                    onChange={(event) =>
-                        table.setGlobalFilter(String(event.target.value))
-                    }
-                    className="h-10 w-[150px] lg:w-full"
-                />
-                {/* {
+  return (
+    <div className="flex items-center justify-between flex-wrap gap-2">
+      <div className="flex flex-1 items-center space-x-2">
+        <Input
+          placeholder="Search..."
+          onChange={(event) =>
+            table.setGlobalFilter(String(event.target.value))
+          }
+          className="h-10 w-[150px] lg:w-full"
+        />
+        {/* {
                     columnsFilterOptions?.map((resource, key) => {
                         return <FacetedFilter
                             key={key}
@@ -52,11 +54,14 @@ export function Toolbar<TData>({
                         <X />
                     </Button>
                 )} */}
-            </div>
-            <div className="flex flex-end items-center gap-2">
-                <SelectedActions table={table} />
-                <ViewOptions table={table} />
-            </div>
-        </div>
-    )
+      </div>
+      <div className="flex flex-end items-center gap-2">
+        <SelectedActions table={table} />
+        <ViewOptions table={table} />
+      </div>
+      {rightContent && (
+        <div className="flex flex-end items-center gap-2">{rightContent}</div>
+      )}
+    </div>
+  );
 }
