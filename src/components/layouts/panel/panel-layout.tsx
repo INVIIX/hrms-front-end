@@ -15,7 +15,7 @@ import { Separator } from "@/components/ui/separator";
 
 import { PanelBreadcrumbs } from "./panel-breadcrumbs";
 import { useBreadcrumbs } from "@/components/context/breadcrumb-context";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import PWABadge from "@/components/commons/PWABadge";
 import { useAuth } from "@/modules/auth/components/context/auth-context";
 

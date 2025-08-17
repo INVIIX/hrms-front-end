@@ -8,6 +8,7 @@ import EmployeeData from "./modules/employee-data/pages/employee-data-pages.tsx"
 import ReportingLines from "./modules/reporting-lines/pages/reporting-lines-page.tsx";
 import GroupManagement from "./modules/group-management/pages/group-management-page.tsx";
 import Salaries from "./modules/salaries/pages/salaries-pages.tsx";
+import LoanManagement from "./modules/loan-management/pages/loan-management-pages.tsx";
 
 const AuthLayout = lazy(() => import('./components/layouts/auth/auth-layout.tsx'));
 const PanelLayout = lazy(() => import('./components/layouts/panel/panel-layout.tsx'));
@@ -40,6 +41,7 @@ export default function AppRoutes() {
                     <Route path="lines" element={<ReportingLines />} />
                     <Route path="group" element={<GroupManagement />} />
                     <Route path="salaries" element={<Salaries />} />
+                    <Route path="loans" element={<LoanManagement />} />
                     <Route path="me" element={<AuthProfilePage />} />
                     <Route path="settings">
                         <Route path="users" element={<UserIndexPage />} />

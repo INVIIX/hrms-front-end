@@ -19,16 +19,16 @@ import { toast } from "sonner";
 import { errorValidation } from "@/lib/error-validation";
 import apiClient from "@/lib/apiClient";
 import { SquarePen, Trash } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from "@/components/ui/select";
 import { useState } from "react";
-import { Card } from "@/components/ui/card";
-import { FaFileExcel } from "react-icons/fa6";
+// import { Card } from "@/components/ui/card";
+// import { FaFileExcel } from "react-icons/fa6";
 import DragAndDropUpload from "./drag-drop";
 
 const formSchemaEducation = z.object({

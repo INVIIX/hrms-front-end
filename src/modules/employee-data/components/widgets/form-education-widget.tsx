@@ -5,7 +5,7 @@ import { FormEducation } from "../ui/form-education";
 
 export default function FormEducationWidget({
   className,
-  ...props
+  // ...props
 }: React.ComponentProps<"div">) {
   return (
     <>

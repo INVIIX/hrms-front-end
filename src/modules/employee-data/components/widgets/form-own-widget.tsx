@@ -5,7 +5,7 @@ import { FormOwn } from "../ui/form-own";
 
 export default function FormOwnWidget({
   className,
-  ...props
+  // ...props
 }: React.ComponentProps<"div">) {
   return (
     <>

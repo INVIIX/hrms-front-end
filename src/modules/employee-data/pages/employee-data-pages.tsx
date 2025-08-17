@@ -14,7 +14,7 @@ import ColumnHeader from "@/components/commons/data-table/colum-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { NavLink } from "react-router";
-import { PencilIcon, Trash2Icon } from "lucide-react";
+import { PencilIcon, Trash2Icon, CloudUpload, PlusIcon } from "lucide-react";
 import { ConfirmDeleteDialog } from "@/components/commons/data-table/confirm-delete";
 import { ButtonAll } from "@/components/commons/button-all";
 import { Separator } from "@/components/ui/separator";
@@ -453,21 +453,48 @@ export default function EmployeeData() {
               title="Employee Data"
               desc="Lorem ipsum dolor sit amet consectetur adipiscing elit."
             />
-            <div className="gap-2 flex items-center">
-              <ButtonAll
-                className="h-10"
-                type="button"
-                onClick={() => openModal("import")}
-              >
-                Import Batch
-              </ButtonAll>
-              <ButtonAll
-                className="h-10"
-                type="button"
-                onClick={() => openModal("new")}
-              >
-                New Users
-              </ButtonAll>
+            <div className="flex items-center gap-2">
+              <div className="hidden sm:flex items-center gap-2">
+                <ButtonAll
+                  className="h-10"
+                  variant="primary"
+                  icon={<CloudUpload className="w-4 h-4" />}
+                  onClick={() => openModal("import")}
+                >
+                  Import Batch
+                </ButtonAll>
+                <ButtonAll
+                  className="h-10"
+                  variant="primary"
+                  onClick={() => openModal("new")}
+                >
+                  New Users
+                </ButtonAll>
+              </div>
+
+              <div className="sm:hidden fixed bottom-6 right-6 z-50 flex flex-col gap-3 items-end">
+                <ButtonAll
+                  className="h-10"
+                  variant="primary"
+                  onClick={() => console.log("Main action")}
+                  fabActions={[
+                    {
+                      icon: <CloudUpload className="w-5 h-5" />,
+                      onClick: () => openModal("import"),
+                      label: "Import Data",
+                      variant: "primary",
+                    },
+                    {
+                      icon: <PlusIcon className="w-5 h-5" />,
+                      onClick: () => openModal("new"),
+                      label: "Export Data",
+                      variant: "primary",
+                    },
+                  ]}
+                >
+                  Tambah User
+                </ButtonAll>
+              </div>
 
               <GeneralModal
                 isOpen={isOpen}

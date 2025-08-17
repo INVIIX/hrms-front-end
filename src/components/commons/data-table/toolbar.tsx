@@ -1,11 +1,11 @@
 "use client"
 
 import { Table } from "@tanstack/react-table"
-import { X } from "lucide-react"
+// import { X } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
+// import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { FacetedFilter } from "./faceted-filter"
+// import { FacetedFilter } from "./faceted-filter"
 import { ViewOptions } from "./view-options"
 import { SelectedActions } from "./selected-actions"
 import { ColumnsFilterOptionsType } from "./data-table"
@@ -17,9 +17,9 @@ interface ToolbarProps<TData> {
 
 export function Toolbar<TData>({
     table,
-    columnsFilterOptions = undefined
+    // columnsFilterOptions = undefined
 }: ToolbarProps<TData>) {
-    const isFiltered = table.getState().columnFilters.length > 0
+    // const isFiltered = table.getState().columnFilters.length > 0
 
     return (
         <div className="flex items-center justify-between flex-wrap gap-2">

@@ -15,6 +15,7 @@ import {
   FileBadge,
   ChartPie,
   ChartSpline,
+  BanknoteArrowDown,
 } from "lucide-react";
 
 import { PanelSidebarMenu } from "./panel-sidebar-menu";
@@ -61,6 +62,11 @@ export function PanelSidebar({
       title: "Salaries",
       icon: HandCoins,
       url: "/salaries",
+    },
+    {
+      title: "Loans Management",
+      icon: BanknoteArrowDown,
+      url: "/loans",
     },
     {
       title: "Leave",

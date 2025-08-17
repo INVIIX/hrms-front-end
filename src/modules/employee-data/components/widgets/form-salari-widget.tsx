@@ -5,7 +5,7 @@ import { FormSalari } from "../ui/form-salari";
 
 export default function FormSalariWidget({
   className,
-  ...props
+  // ...props
 }: React.ComponentProps<"div">) {
   return (
     <>

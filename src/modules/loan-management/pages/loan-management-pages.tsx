@@ -14,15 +14,13 @@ import ColumnHeader from "@/components/commons/data-table/colum-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { NavLink } from "react-router";
-import { PencilIcon, Trash2Icon, Eye, EyeOff } from "lucide-react";
+import { PencilIcon, Trash2Icon, CloudUpload } from "lucide-react";
 import { ConfirmDeleteDialog } from "@/components/commons/data-table/confirm-delete";
 import { ButtonAll } from "@/components/commons/button-all";
 import { Separator } from "@/components/ui/separator";
-import { TabsWidget } from "../components/widgets/tabs-widget";
-import { Tab } from "../components/ui/tabs";
-import ContentChart from "../components/ui/content-chart";
 import GeneralModal from "@/components/commons/general-modal";
-import { Input } from "@/components/ui/input";
+import { TabsWidget } from "../components/widgets/tabs-widget";
+import FormLoanWidget from "../components/widgets/form-loan-widget";
 
 type TUser = {
   id: number;
@@ -33,14 +31,17 @@ type TUser = {
   avatar?: string;
 };
 
-export default function Salaries() {
+export default function LoanManagement() {
   const [active, setActive] = useState("overview");
   const apiEndpoint = "users";
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
-  const [, setModalType] = useState<"import" | "new" | "password" | null>(null);
-  const [showValues, setShowValues] = useState(false);
-  const [passwordInput, setPasswordInput] = useState("");
+  const [modalType, setModalType] = useState<"import" | "new" | null>(null);
+
+  const openModal = (type: "import" | "new") => {
+    setModalType(type);
+    setIsOpen(true);
+  };
 
   const reloadData = () => {
     queryClient.invalidateQueries({ queryKey: [apiEndpoint] });
@@ -130,6 +131,73 @@ export default function Salaries() {
     },
   ];
 
+  const columnsWork: ColumnDef<TUser>[] = [
+    {
+      id: "id",
+      header: ({ table }) => {
+        return (
+          <Checkbox
+            checked={
+              table.getIsAllPageRowsSelected() ||
+              (table.getIsSomePageRowsSelected() && "indeterminate")
+            }
+            onCheckedChange={(value) =>
+              table.toggleAllPageRowsSelected(!!value)
+            }
+            aria-label="Select all"
+          />
+        );
+      },
+      cell: ({ row }) => {
+        return (
+          <Checkbox
+            checked={row.getIsSelected()}
+            onCheckedChange={(value) => row.toggleSelected(!!value)}
+            aria-label="Select row"
+          />
+        );
+      },
+    },
+    {
+      accessorKey: "name",
+      header: ({ column }) => <ColumnHeader column={column} title="Name" />,
+    },
+    {
+      accessorKey: "status",
+      header: ({ column }) => <ColumnHeader column={column} title="Status" />,
+      cell: ({ row }) => {
+        const data = row.original.status;
+        return (
+          <Badge variant={data ? "default" : "secondary"}>
+            {data ? "Active" : "Inactive"}
+          </Badge>
+        );
+      },
+    },
+    {
+      id: "actions",
+      header: () => {
+        return <></>;
+      },
+      cell: ({ row }) => {
+        return (
+          <div className="w-auto flex items-center justify-end gap-2">
+            <Button variant="outline" asChild>
+              <NavLink to={`/settings/users/${row.original.id}/edit`}>
+                <PencilIcon />
+              </NavLink>
+            </Button>
+            <ConfirmDeleteDialog onConfirm={() => onRowDelete(row.original.id)}>
+              <Button variant="outline">
+                <Trash2Icon />
+              </Button>
+            </ConfirmDeleteDialog>
+          </div>
+        );
+      },
+    },
+  ];
+
   const columnsFilterOptions: ColumnsFilterOptionsType = [
     {
       title: "Status",
@@ -151,42 +219,22 @@ export default function Salaries() {
     },
   ];
 
-  const tabs: Tab[] = [
-    { key: "overview", label: "Overview", type: "chart" },
-    { key: "details", label: "Employee Details", type: "table" },
+  const tabs = [
+    { key: "overview", label: "Overviews" },
+    { key: "types", label: "Loan Types" },
   ];
 
-  function getTabContent(tabKey: string, showValues: boolean) {
-    const tab = tabs.find((t) => t.key === tabKey);
-    if (!tab) return null;
-
-    if (tab.type === "table") {
-      let columnsToUse: ColumnDef<TUser>[] = [];
-      switch (tab.key) {
-        case "details":
-          columnsToUse = columnsOwn;
-          break;
-      }
-
-      return (
-        <DataTable
-          source={apiEndpoint}
-          columns={columnsToUse}
-          columnsFilterOptions={columnsFilterOptions}
-        />
-      );
+  function getTableDataAndColumns(tab: string) {
+    switch (tab) {
+      case "types":
+        return { columns: columnsWork };
+      case "overview":
+      default:
+        return { columns: columnsOwn };
     }
-
-    if (tab.type === "chart") {
-      return (
-        <div className="w-full">
-          <ContentChart showValues={showValues} />
-        </div>
-      );
-    }
-
-    return null;
   }
+
+  const { columns } = getTableDataAndColumns(active);
 
   return (
     <div>
@@ -195,74 +243,67 @@ export default function Salaries() {
           <div className="flex items-center justify-between gap-2 sm:flex-row flex-col">
             <TitleHeader
               icon={<MdOutlineDataUsage className="w-4 h-4 text-blue-700" />}
-              title="Employee Data"
+              title="Loans Management"
               desc="Lorem ipsum dolor sit amet consectetur adipiscing elit."
             />
-            <div className="gap-2 flex items-center">
-              <ButtonAll
-                className="h-10"
-                type="button"
-                icon={
-                  showValues ? (
-                    <EyeOff className="w-4 h-4" />
-                  ) : (
-                    <Eye className="w-4 h-4" />
-                  )
-                }
-                onClick={() => {
-                  if (showValues) {
-                    setShowValues(false);
-                  } else {
-                    setModalType("password");
-                    setIsOpen(true);
-                  }
-                }}
-              >
-                {showValues ? "Hide" : "Show"}
-              </ButtonAll>
+            <div className="flex items-center gap-2">
+              {active === "types" && (
+                <div className="hidden sm:flex items-center gap-2">
+                  <ButtonAll
+                    className="h-10"
+                    variant="primary"
+                    onClick={() => openModal("import")}
+                  >
+                    New Loans Type
+                  </ButtonAll>
+                </div>
+              )}
+
+              {active === "types" && (
+                <div className="sm:hidden fixed bottom-6 right-6 z-50 flex flex-col gap-3 items-end">
+                  <ButtonAll
+                    className="h-10"
+                    variant="primary"
+                    onClick={() => console.log("Main action")}
+                    fabActions={[
+                      {
+                        icon: <CloudUpload className="w-5 h-5" />,
+                        onClick: () => openModal("new"),
+                        label: "New Data",
+                        variant: "primary",
+                      },
+                    ]}
+                  >
+                    New Loans Type
+                  </ButtonAll>
+                </div>
+              )}
 
               <GeneralModal
                 isOpen={isOpen}
                 onClose={() => setIsOpen(false)}
-                size="md"
-                title="Enter your password"
-                desc="Type your user password to show the data"
+                size={modalType === "new" ? "2xl" : "3xl"}
+                title="New Loans Type"
+                desc="Lorem ipsum dolor sit amet."
                 footer={
                   <>
                     <button
                       className="bg-gray-300 hover:bg-gray-500 text-sm px-4 py-2 w-32 rounded-md"
-                      onClick={() => {
-                        setPasswordInput("");
-                        setIsOpen(false);
-                      }}
+                      onClick={() => setIsOpen(false)}
                     >
                       Cancel
                     </button>
-                    <button
-                      className="bg-gray-800 hover:bg-gray-600 text-white text-sm px-4 py-2 w-32 rounded-md"
-                      onClick={() => {
-                        if (passwordInput === "12345678") {
-                          setShowValues(true);
-                          setIsOpen(false);
-                          setPasswordInput("");
-                        } else {
-                          toast.error("Incorrect password!");
-                        }
-                      }}
-                    >
-                      Confirm
+                    <button className="bg-gray-800 hover:bg-gray-600 text-white text-sm px-4 py-2 w-32 rounded-md">
+                      Submit
                     </button>
                   </>
                 }
               >
-                <div className="flex flex-col p-4">
-                  <Input
-                    type="password"
-                    placeholder="Type your password"
-                    value={passwordInput}
-                    onChange={(e) => setPasswordInput(e.target.value)}
-                  />
-                </div>
+                {modalType && (
+                  <div className="flex flex-col p-4">
+                    <FormLoanWidget />
+                  </div>
+                )}
               </GeneralModal>
             </div>
           </div>
@@ -274,7 +315,11 @@ export default function Salaries() {
             />
           </div>
           <Separator className="my-4" />
-          {getTabContent(active, showValues)}
+          <DataTable
+            source={apiEndpoint}
+            columns={columns}
+            columnsFilterOptions={columnsFilterOptions}
+          />
         </div>
       </div>
     </div>

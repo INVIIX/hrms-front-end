@@ -9,17 +9,6 @@ type WizardFormProps = {
   steps: Step[];
   onSubmit?: () => void;
 };
-// import { useState } from "react";
-
-// interface Step {
-//   title: string;
-//   content: React.ReactNode;
-// }
-
-// interface WizardFormProps {
-//   steps: Step[];
-//   onSubmit?: () => void;
-// }
 
 export const WizardForm: React.FC<WizardFormProps> = ({ steps }) => {
   const [wizardStep, setWizardStep] = useState(1);

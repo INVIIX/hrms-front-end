@@ -5,7 +5,7 @@ import { FormSubgroup } from "../ui/form-subgroup";
 
 export default function FormSubgroupWidget({
   className,
-  ...props
+  // ...props
 }: React.ComponentProps<"div">) {
   return (
     <>

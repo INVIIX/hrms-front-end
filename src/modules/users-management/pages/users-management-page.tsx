@@ -150,7 +150,9 @@ export default function UserManagement() {
               title="Users Management"
               desc="Lorem ipsum dolor sit amet consectetur adipiscing elit."
             />
-            <ButtonAll className="h-10" type="button" />
+            <ButtonAll className="h-10" variant="primary">
+              New Users
+            </ButtonAll>
           </div>
           <Separator className="my-4" />
           <DataTable<TUser>
