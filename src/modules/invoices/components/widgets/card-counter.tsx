@@ -10,13 +10,14 @@ type AnalyticsCard = {
   bg?: string;
   isPercentage?: boolean;
   suffix?: string;
+  prefix?: string;
 };
 
-type AnalyticsCardListProps = {
+type SalariesCardListProps = {
   analytics: AnalyticsCard[];
 };
 
-const AnalyticsCardList: React.FC<AnalyticsCardListProps> = ({ analytics }) => (
+const SalariesCardList: React.FC<SalariesCardListProps> = ({ analytics }) => (
   <div className="dark:border-gray-100">
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-3">
       {analytics.map((item, i) => (
@@ -27,19 +28,23 @@ const AnalyticsCardList: React.FC<AnalyticsCardListProps> = ({ analytics }) => (
           } shadow-md`}
         >
           <div className="flex items-center justify-between">
-            <div className="flex items-center">
+            <div className="flex items-center w-full">
               <div className="mr-3">
                 <div className="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gray-600 dark:bg-blue-500 shadow">
                   {item.icon}
                 </div>
               </div>
-              <div className="mx-2">
+              <div className="mx-2 w-full">
                 <div className="text-2xl font-bold text-dark">
                   {typeof item.value === "number" ? (
                     <>
+                      {item.prefix && (
+                        <span className="text-md">{item.prefix}</span>
+                      )}
                       <Counter
                         value={item.value}
                         decimals={item.isPercentage ? 1 : 1}
+                        className="text-md"
                         format={(val) =>
                           item.isPercentage
                             ? `${val.toFixed(1)}%`
@@ -57,11 +62,13 @@ const AnalyticsCardList: React.FC<AnalyticsCardListProps> = ({ analytics }) => (
                     item.value
                   )}
                 </div>
-                <div className="text-gray-400 text-sm">{item.label}</div>
+                <div className="text-gray-400 text-sm flex justify-between w-full items-center">
+                  {item.label}
+                  <div className="text-xs font-medium text-gray-800 justify-end text-end">
+                    {item.growth}
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="text-xs font-medium text-textDark">
-              {item.growth}
             </div>
           </div>
         </Card>
@@ -70,4 +77,4 @@ const AnalyticsCardList: React.FC<AnalyticsCardListProps> = ({ analytics }) => (
   </div>
 );
 
-export default AnalyticsCardList;
+export default SalariesCardList;

@@ -76,7 +76,7 @@ export function PanelSidebar({
     {
       title: "Invoices",
       icon: FileBadge,
-      url: "/invoice",
+      url: "/invoices",
     },
     {
       title: "KPI Management",

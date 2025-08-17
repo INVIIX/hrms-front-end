@@ -64,7 +64,7 @@ const SalariesCardList: React.FC<SalariesCardListProps> = ({ analytics }) => (
                 </div>
                 <div className="text-gray-400 text-sm flex justify-between w-full">
                   {item.label}
-                  <div className="text-sm font-medium text-gray-800 justify-end text-end">
+                  <div className="text-xs font-medium text-gray-800 justify-end text-end">
                     {item.growth}
                   </div>
                 </div>

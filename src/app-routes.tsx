@@ -10,6 +10,7 @@ import GroupManagement from "./modules/group-management/pages/group-management-p
 import Salaries from "./modules/salaries/pages/salaries-pages.tsx";
 import LoanManagement from "./modules/loan-management/pages/loan-management-pages.tsx";
 import Leave from "./modules/leave/pages/leave-pages.tsx";
+import Invoices from "./modules/invoices/pages/invoices-pages.tsx";
 
 const AuthLayout = lazy(() => import('./components/layouts/auth/auth-layout.tsx'));
 const PanelLayout = lazy(() => import('./components/layouts/panel/panel-layout.tsx'));
@@ -44,6 +45,7 @@ export default function AppRoutes() {
                     <Route path="salaries" element={<Salaries />} />
                     <Route path="loans" element={<LoanManagement />} />
                     <Route path="leave" element={<Leave />} />
+                    <Route path="invoices" element={<Invoices />} />
                     <Route path="me" element={<AuthProfilePage />} />
                     <Route path="settings">
                         <Route path="users" element={<UserIndexPage />} />
