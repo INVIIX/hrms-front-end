@@ -33,14 +33,14 @@ export default defineConfig({
         background_color: '#ffffff',
         icons: [
           {
-            src: 'pwa-192x192.png',
+            src: 'icons.svg',
             sizes: '192x192',
-            type: 'image/png'
+            type: 'image/svg'
           },
           {
-            src: 'pwa-512x512.png',
+            src: 'icons.svg',
             sizes: '512x512',
-            type: 'image/png'
+            type: 'image/svg'
           }
         ]
       },
