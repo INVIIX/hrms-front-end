@@ -24,6 +24,7 @@ const DashboardPage = lazy(() => import('./modules/dashboard/pages/dashboard-pag
 const UserIndexPage = lazy(() => import('./modules/users/pages/user-index-page.tsx'));
 const UserCreatePage = lazy(() => import('./modules/users/pages/user-create-page.tsx'));
 const UserEditPage = lazy(() => import('./modules/users/pages/user-edit-page.tsx'));
+const GroupIndexPage = lazy(() => import('./modules/master-data/group/pages/group-index-page.tsx'));
 
 export default function AppRoutes() {
     return <>
@@ -50,9 +51,8 @@ export default function AppRoutes() {
                     <Route path="kpi" element={<KPIManagement />} />
                     <Route path="me" element={<AuthProfilePage />} />
                     <Route path="settings">
-                        <Route path="users" element={<UserIndexPage />} />
-                        <Route path="users/create" element={<UserCreatePage />} />
-                        <Route path="users/:userId/edit" element={<UserEditPage />} />
+                        <Route path="group" element={<GroupIndexPage />} />
+                        <Route path="group/:groupId/edit" element={<UserEditPage />} />
                     </Route>
                     <Route path="*" element={<ErrorPage />} />
                 </Route>

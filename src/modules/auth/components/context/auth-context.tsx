@@ -34,7 +34,7 @@ const AuthContext = createContext<AuthContextType>({
 const fetchUser = async () => {
     await waitUntilNotRefreshing();
     try {
-        const response = await apiClient.get('/auth/me');
+        const response = await apiClient.get('/me');
         return response.data.data;
     } catch (err) {
         return Promise.reject(err);
