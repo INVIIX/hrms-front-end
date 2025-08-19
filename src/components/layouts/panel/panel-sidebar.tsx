@@ -2,7 +2,7 @@
 
 import { Sidebar, SidebarContent } from "@/components/ui/sidebar";
 
-import { BadgeCheck, LogOut } from "lucide-react";
+import { BadgeCheck, CogIcon, LogOut } from "lucide-react";
 
 import {
   HomeIcon,
@@ -87,6 +87,15 @@ export function PanelSidebar({
       title: "Reports",
       icon: ChartSpline,
       url: "/report",
+    },
+    {
+      title: "Master Data",
+      icon: CogIcon,
+      children: [
+        { title: "Group", url: "/settings/group" },
+        { title: "Position", url: "/settings/position" },
+        { title: "Salary", url: "/settings/salary" },
+      ],
     },
     // {
     //     title: "Settings",

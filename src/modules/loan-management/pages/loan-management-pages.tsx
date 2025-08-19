@@ -4,18 +4,18 @@ import { useState } from "react";
 import DataTable, {
   ColumnsFilterOptionsType,
 } from "@/components/commons/data-table/data-table";
-import { useQueryClient } from "@tanstack/react-query";
-import apiClient from "@/lib/apiClient";
-import { toast } from "sonner";
-import { AxiosError } from "axios";
+// import { useQueryClient } from "@tanstack/react-query";
+// import apiClient from "@/lib/apiClient";
+// import { toast } from "sonner";
+// import { AxiosError } from "axios";
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@radix-ui/react-checkbox";
 import ColumnHeader from "@/components/commons/data-table/colum-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { NavLink } from "react-router";
-import { PencilIcon, Trash2Icon, CloudUpload, Eye } from "lucide-react";
-import { ConfirmDeleteDialog } from "@/components/commons/data-table/confirm-delete";
+// import { PencilIcon, Trash2Icon, CloudUpload, Eye } from "lucide-react";
+import { CloudUpload, Eye } from "lucide-react";
 import { ButtonAll } from "@/components/commons/button-all";
 import { Separator } from "@/components/ui/separator";
 import GeneralModal from "@/components/commons/general-modal";
@@ -34,7 +34,7 @@ type TUser = {
 export default function LoanManagement() {
   const [active, setActive] = useState("overview");
   const apiEndpoint = "users";
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
   const [modalType, setModalType] = useState<"import" | "new" | "view" | null>(
     null
@@ -46,22 +46,22 @@ export default function LoanManagement() {
     setIsOpen(true);
   };
 
-  const reloadData = () => {
-    queryClient.invalidateQueries({ queryKey: [apiEndpoint] });
-  };
+  // const reloadData = () => {
+  //   queryClient.invalidateQueries({ queryKey: [apiEndpoint] });
+  // };
 
-  const onRowDelete = async (primaryKey: number | string | null) => {
-    try {
-      const response = await apiClient.delete(`${apiEndpoint}/${primaryKey}`);
-      if (response.status == 200) {
-        toast.success("Data has been deleted.");
-        reloadData();
-      }
-    } catch (err) {
-      const error = err as AxiosError;
-      toast.error(error.message);
-    }
-  };
+  // const onRowDelete = async (primaryKey: number | string | null) => {
+  //   try {
+  //     const response = await apiClient.delete(`${apiEndpoint}/${primaryKey}`);
+  //     if (response.status == 200) {
+  //       toast.success("Data has been deleted.");
+  //       reloadData();
+  //     }
+  //   } catch (err) {
+  //     const error = err as AxiosError;
+  //     toast.error(error.message);
+  //   }
+  // };
 
   const columnsOwn: ColumnDef<TUser>[] = [
     {
@@ -193,7 +193,8 @@ export default function LoanManagement() {
       header: () => {
         return <></>;
       },
-      cell: ({ row }) => {
+      // cell: ({ row }) => {
+      cell: ({  }) => {
         return (
           <div className="w-auto flex items-center justify-end gap-2">
             <Button variant="outline" asChild>

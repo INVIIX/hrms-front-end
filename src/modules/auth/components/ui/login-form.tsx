@@ -50,7 +50,7 @@ export function LoginForm({
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const response = await apiClient.post("/auth/login", values);
+      const response = await apiClient.post("/api/login", values);
       if (response.status === 200) {
         const access_token: string = response.data.data.access_token;
         localStorage.setItem("access_token", access_token);
