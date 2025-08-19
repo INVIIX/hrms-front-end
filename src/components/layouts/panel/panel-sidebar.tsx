@@ -89,22 +89,14 @@ export function PanelSidebar({
       url: "/report",
     },
     {
-      title: "Master Data",
-      icon: CogIcon,
-      children: [
-        { title: "Group", url: "/settings/group" },
-        { title: "Position", url: "/settings/position" },
-        { title: "Salary", url: "/settings/salary" },
-      ],
+        title: "Settings",
+        icon: CogIcon,
+        children: [
+            { title: "Group", url: "/settings/group" },
+            { title: "Position", url: "/settings/position" },
+            { title: "Salary Component", url: "/settings/salary-component" },
+        ],
     },
-    // {
-    //     title: "Settings",
-    //     icon: CogIcon,
-    //     children: [
-    //         { title: "Users", url: "/settings/users" },
-    //         { title: "Roles", url: "/settings/roles" },
-    //     ],
-    // },
   ];
 
   useEffect(() => {
