@@ -18,7 +18,7 @@ interface BaseTableProps<TData> {
 export default function BaseTable<TData>({ table }: BaseTableProps<TData>) {
     return <>
         <div className="w-full rounded-md border overflow-x-auto">
-            <Table>
+            <Table className="border border-gray-300">
                 <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
                         <TableRow key={headerGroup.id}>
@@ -46,7 +46,7 @@ export default function BaseTable<TData>({ table }: BaseTableProps<TData>) {
                                 data-state={row.getIsSelected() && "selected"}
                             >
                                 {row.getVisibleCells().map((cell) => (
-                                    <TableCell key={cell.id}>
+                                    <TableCell className="border-r border-gray-300" key={cell.id}>
                                         {flexRender(
                                             cell.column.columnDef.cell,
                                             cell.getContext()

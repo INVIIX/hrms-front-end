@@ -2,16 +2,18 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { SimpleModal } from "./simple-modal";
+import { EnumItem } from "@/lib/enumClass";
 
-type FieldType = {
+export type FieldType = {
     name: string;
     label: string;
     type?: "text" | "number" | "email" | "password" | "textarea" | "select";
     placeholder?: string;
-    options?: { label: string; value: string }[];
+    options?: EnumItem[];
     required?: boolean;
     defaultValue?: any;
 };
+
 
 interface FormModalProps {
     isOpen: boolean;
@@ -66,9 +68,11 @@ export const FormModal = ({
     return (
         <SimpleModal isOpen={isOpen} onClose={handleClose}>
             <div className="space-y-4">
+                
                 {title && <h2 className="text-xl font-semibold">{title}</h2>}
 
                 <form onSubmit={handleSubmit(submitForm)} className="space-y-4">
+                    
                     {fields.map((field) => (
                         <div key={field.name} className="flex flex-col">
                             <label className="mb-1 font-medium">{field.label}</label>

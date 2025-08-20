@@ -25,15 +25,16 @@ type Tfield = {
 export function TableUi({
     refreshKey,
     onEdit,
+    endPoint
 }: {
     refreshKey?: number;
     onEdit?: (row: any) => void;
+    endPoint: string
 }) {
-    const apiEndpoint = "groups";
     const queryClient = useQueryClient()
     const reloadData = () => {
         console.log("reload")
-        queryClient.invalidateQueries({ queryKey: [apiEndpoint] })
+        queryClient.invalidateQueries({ queryKey: [endPoint] })
     }
     useEffect(() => {
         if (refreshKey !== undefined) {
@@ -44,7 +45,7 @@ export function TableUi({
 
     const onRowDelete = async (primaryKey: number | string | null) => {
         try {
-            const response = await apiClient.delete(`${apiEndpoint}/${primaryKey}`)
+            const response = await apiClient.delete(`${endPoint}/${primaryKey}`)
             if (response.status == 200) {
                 toast.success('Data has been deleted.');
                 reloadData()
@@ -133,7 +134,7 @@ export function TableUi({
 
     return <>
         <DataTable<Tfield>
-            source={apiEndpoint}
+            source={endPoint}
             columns={columns}
             columnsFilterOptions={columnsFilterOptions}
         />

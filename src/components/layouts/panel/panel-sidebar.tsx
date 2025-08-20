@@ -46,7 +46,7 @@ export function PanelSidebar({
     {
       title: "Employees Data",
       icon: IdCardLanyard,
-      url: "/employee",
+      url: "/employees",
     },
     {
       title: "Reporting Lines",
@@ -92,9 +92,9 @@ export function PanelSidebar({
         title: "Settings",
         icon: CogIcon,
         children: [
-            { title: "Group", url: "/settings/group" },
-            { title: "Position", url: "/settings/position" },
-            { title: "Salary Component", url: "/settings/salary-component" },
+            { title: "Group", url: "/settings/groups" },
+            { title: "Position", url: "/settings/positions" },
+            { title: "Salary Component", url: "/settings/salary-components" },
         ],
     },
   ];

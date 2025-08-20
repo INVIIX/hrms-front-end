@@ -21,9 +21,27 @@ type WizardFormProps = {
 //   onSubmit?: () => void;
 // }
 
+const handleSubmit = () => {
+  console.log(title);
+};
+
 export const WizardForm: React.FC<WizardFormProps> = ({ steps }) => {
   const [wizardStep, setWizardStep] = useState(1);
   const totalSteps = steps.length;
+
+  const [formData, setFormData] = useState({
+    own: {},
+    work: {},
+    salary: {},
+    education: {},
+  });
+  const handleNext = (stepName: string, data: any) => {
+    setFormData((prev) => ({
+      ...prev,
+      [stepName]: data,
+    }));
+    setWizardStep((prev) => prev + 1);
+  };
 
   return (
     <div className="w-full max-w-3xl mx-auto">
@@ -69,7 +87,10 @@ export const WizardForm: React.FC<WizardFormProps> = ({ steps }) => {
           <button
             type="button"
             className="bg-gray-800 hover:bg-gray-600 text-white text-sm px-4 py-2 w-32 rounded-md"
-            onClick={() => setWizardStep(wizardStep + 1)}
+            onClick={() => {
+              setWizardStep(wizardStep + 1);
+              console.log(wizardStep);
+            }}
           >
             Next
           </button>
@@ -85,6 +106,7 @@ export const WizardForm: React.FC<WizardFormProps> = ({ steps }) => {
                 ? "salariForm"
                 : "educationForm"
             }
+            onClick={handleSubmit}
             className="bg-gray-800 hover:bg-gray-600 text-white text-sm px-4 py-2 w-32 rounded-md"
           >
             Add User

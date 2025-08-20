@@ -115,9 +115,10 @@ export function FormOwn({ className, ...props }: React.ComponentProps<"form">) {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      await apiClient.post("/auth/register", values);
-      navigate("/login");
-      toast.success("Registration success");
+      console.log("values")
+      // await apiClient.post("/auth/register", values);
+      // navigate("/login");
+      // toast.success("Registration success");
     } catch (err) {
       const error = err as AxiosError;
       errorValidation(error, setError);

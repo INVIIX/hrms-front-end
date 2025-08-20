@@ -2,25 +2,29 @@
 
 import { Button } from "@/components/ui/button";
 import { FormModal } from "@/components/ui/form-modal";
-import { TableUi } from "../ui/group-data-table";
-import { TBreadcrumbs, useBreadcrumbs } from "@/components/context/breadcrumb-context";
+import { TableUi } from "../ui/position-data-table";
+import {
+  TBreadcrumbs,
+  useBreadcrumbs,
+} from "@/components/context/breadcrumb-context";
 import { useEffect, useState } from "react";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
 import { errorValidation } from "@/lib/error-validation";
 import apiClient from "@/lib/apiClient";
 import { useLastPath } from "@/lib/utils";
-  
-
+import enumClass, { EnumItem } from "@/lib/enumClass";
+import type { FieldType } from "@/components/ui/form-modal";
 const breadcrumbs: TBreadcrumbs = [
   { label: "Dashboard", href: "/" },
   { label: "Settings" },
-  { label: "Group" },
+  { label: "Position" },
 ];
 
 type TGroup = {
   id?: number;
   name: string;
+  level: string;
 };
 
 export default function IndexPage() {
@@ -29,8 +33,16 @@ export default function IndexPage() {
   const [editData, setEditData] = useState<TGroup | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
   const lastPath = useLastPath();
-  const fields = [
-    { name: "name", label: "Nama Grup", required: true },
+  const [options, setOptions] = useState<EnumItem[]>([]);
+
+  useEffect(() => {
+    enumClass.getList("enums/salary-component-type").then(setOptions);
+  }, []);
+
+  const fields :FieldType[] = [
+    { name: "name", label: "Name", required: true },
+   
+    { name: "level", label: "Level", required: true },
   ];
 
   const handleSubmit = async (data: any, setError: any) => {
@@ -78,12 +90,16 @@ export default function IndexPage() {
               setOpen(true);
             }}
           >
-            Buat Grup
+            Create
           </Button>
         </div>
       </div>
 
-      <TableUi refreshKey={refreshKey} onEdit={handleEdit} endPoint={lastPath} />
+      <TableUi
+        refreshKey={refreshKey}
+        onEdit={handleEdit}
+        endPoint={lastPath}
+      />
 
       <FormModal
         isOpen={open}
@@ -91,12 +107,12 @@ export default function IndexPage() {
           setOpen(false);
           setEditData(null);
         }}
-        title={editData ? "Edit Grup" : "Form Grup Baru"}
+        title={editData ? "Edit" : "Form Create"}
         fields={fields}
         defaultValues={editData ?? {}}
         onSubmit={handleSubmit}
-        submitLabel={editData ? "Update" : "Simpan"}
-        cancelLabel="Batal"
+        submitLabel={editData ? "Update" : "Save"}
+        cancelLabel="Cancel"
       />
     </div>
   );

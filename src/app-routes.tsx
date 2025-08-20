@@ -25,6 +25,9 @@ const UserIndexPage = lazy(() => import('./modules/users/pages/user-index-page.t
 const UserCreatePage = lazy(() => import('./modules/users/pages/user-create-page.tsx'));
 const UserEditPage = lazy(() => import('./modules/users/pages/user-edit-page.tsx'));
 const GroupIndexPage = lazy(() => import('./modules/master-data/group/pages/group-index-page.tsx'));
+const SalaryIndexPage = lazy(() => import('./modules/master-data/salary/pages/salary-index-page.tsx'));
+const PositionIndexPage = lazy(() => import('./modules/master-data/positions/pages/position-index-page.tsx'));
+const EmployeIndexPage = lazy(() => import('./modules/employee-data/pages/employee-index-page.tsx'));
 
 export default function AppRoutes() {
     return <>
@@ -41,7 +44,7 @@ export default function AppRoutes() {
                 <Route element={<PanelLayout />}>
                     <Route index element={<DashboardPage />} />
                     <Route path="users" element={<UserManagement />} />
-                    <Route path="employee" element={<EmployeeData />} />
+                    <Route path="employees" element={<EmployeIndexPage />} />
                     <Route path="lines" element={<ReportingLines />} />
                     <Route path="group" element={<GroupManagement />} />
                     <Route path="salaries" element={<Salaries />} />
@@ -51,8 +54,9 @@ export default function AppRoutes() {
                     <Route path="kpi" element={<KPIManagement />} />
                     <Route path="me" element={<AuthProfilePage />} />
                     <Route path="settings">
-                        <Route path="group" element={<GroupIndexPage />} />
-                        <Route path="group/:groupId/edit" element={<UserEditPage />} />
+                        <Route path="groups" element={<GroupIndexPage />} />
+                        <Route path="salary-components" element={<SalaryIndexPage />} />
+                        <Route path="positions" element={<PositionIndexPage />} />
                     </Route>
                     <Route path="*" element={<ErrorPage />} />
                 </Route>
