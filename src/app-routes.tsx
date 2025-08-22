@@ -28,6 +28,7 @@ const GroupIndexPage = lazy(() => import('./modules/master-data/group/pages/grou
 const SalaryIndexPage = lazy(() => import('./modules/master-data/salary/pages/salary-index-page.tsx'));
 const PositionIndexPage = lazy(() => import('./modules/master-data/positions/pages/position-index-page.tsx'));
 const EmployeIndexPage = lazy(() => import('./modules/employee-data/pages/employee-index-page.tsx'));
+const EmployeDetailPage = lazy(() => import('./modules/employee-data/pages/employee-detail-pages.tsx'));
 
 export default function AppRoutes() {
     return <>
@@ -44,7 +45,8 @@ export default function AppRoutes() {
                 <Route element={<PanelLayout />}>
                     <Route index element={<DashboardPage />} />
                     <Route path="users" element={<UserManagement />} />
-                    <Route path="employees" element={<EmployeIndexPage />} />
+                    <Route path="employees" element={<EmployeIndexPage/>} />
+                    <Route path="employees/:id" element={<EmployeDetailPage/>} />
                     <Route path="lines" element={<ReportingLines />} />
                     <Route path="group" element={<GroupManagement />} />
                     <Route path="salaries" element={<Salaries />} />

@@ -14,7 +14,7 @@ export const SimpleModal = ({
   onClose,
   children,
   className,
-  size ="md"
+  size 
 }: SimpleModalProps) => {
   useEffect(() => {
     if (isOpen) {
@@ -35,7 +35,7 @@ export const SimpleModal = ({
       onClick={onClose}
     >
       <div
-        className={`relative bg-white rounded-md shadow-lg w-full max-w-${size} p-6 ${className}`}
+        className={`relative bg-white rounded-md shadow-lg w-full max-w-${size} p-5 ${className}`}
         onClick={(e) => e.stopPropagation()}
       >
         <button

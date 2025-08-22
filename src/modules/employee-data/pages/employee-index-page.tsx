@@ -35,9 +35,9 @@ export default function IndexPage() {
   const [options, setOptions] = useState<OptionsType>({
     employee_type: [],
     gender: [],
-    employee_status:[],
-    marital_status:[],
-    citizenship:[]
+    employee_status: [],
+    marital_status: [],
+    citizenship: [],
   });
 
   type OptionsType = {

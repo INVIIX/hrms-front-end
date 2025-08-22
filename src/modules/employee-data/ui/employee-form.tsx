@@ -65,7 +65,7 @@ export const FormModal = ({
   };
 
   return (
-    <SimpleModal isOpen={isOpen} onClose={handleClose} size={"5xl"}>
+    <SimpleModal isOpen={isOpen} onClose={handleClose} size={"4xl"}>
      
         {title && <h2 className="text-xl font-semibold">{title}</h2>}
 

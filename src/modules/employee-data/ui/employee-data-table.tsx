@@ -4,7 +4,7 @@ import DataTable, {
   ColumnsFilterOptionsType,
 } from "@/components/commons/data-table/data-table";
 import { Button } from "@/components/ui/button";
-import { PencilIcon, Trash2Icon } from "lucide-react";
+import { EyeIcon, PencilIcon, Trash2Icon } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import apiClient from "@/lib/apiClient";
@@ -13,35 +13,10 @@ import { ConfirmDeleteDialog } from "@/components/commons/data-table/confirm-del
 import { Checkbox } from "@/components/ui/checkbox";
 import { useEffect } from "react";
 import moment from "moment";
+import { useNavigate } from "react-router-dom";
+import { TfieldEmployee } from "../model/employee-model";
 
-type Tfield = {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  nip: string;
-  avatar: null;
-  type: string;
-  status: string;
-  bank_name: string;
-  bank_account: string;
-  profile : Tprofile
-};
 
-type Tprofile = {
-  name: string;
-  nik: string;
-  npwp: string;
-  bpjs_kesehatan: string;
-  bpjs_ketenagakerjaan: string;
-  place_of_birth: string;
-  date_of_birth: string;
-  gender: string;
-  marital_status: string;
-  citizenship: string;
-  legal_address: string;
-  residential_address: string;
-};
 
 export function TableUi({
   refreshKey,
@@ -52,6 +27,7 @@ export function TableUi({
   onEdit?: (row: any) => void;
   endPoint: string;
 }) {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const reloadData = () => {
     console.log("reload");
@@ -76,7 +52,7 @@ export function TableUi({
     }
   };
 
-  const columns: ColumnDef<Tfield>[] = [
+  const columns: ColumnDef<TfieldEmployee>[] = [
     {
       id: "id",
       header: ({ table }) => {
@@ -179,6 +155,9 @@ export function TableUi({
             <Button variant="outline" onClick={() => onEdit?.(row.original)}>
               <PencilIcon />
             </Button>
+            <Button variant="outline" onClick={() => { navigate(`/employees/${row.original.id}`)}}>
+              <EyeIcon />
+            </Button>
 
             <ConfirmDeleteDialog onConfirm={() => onRowDelete(row.original.id)}>
               <Button variant="outline">
@@ -214,7 +193,7 @@ export function TableUi({
 
   return (
     <>
-      <DataTable<Tfield>
+      <DataTable<TfieldEmployee>
         source={endPoint}
         columns={columns}
         columnsFilterOptions={columnsFilterOptions}
