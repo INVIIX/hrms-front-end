@@ -2,7 +2,7 @@ import apiClient from "@/lib/apiClient";
 
 // Type sesuai response API
 export type EnumItem = {
-  value: string | number;
+  value: string | number | boolean;
   label: string;
 };
 

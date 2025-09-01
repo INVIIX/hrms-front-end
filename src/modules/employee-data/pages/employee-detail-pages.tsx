@@ -13,129 +13,114 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { DocumentCard } from "@/components/ui/card-dokment";
 import { EducationHistory } from "@/components/ui/card-education";
 import {
+  contactsField,
+  educationField,
+  OptionsType,
+  profielField,
   TfieldEducation,
   TfieldEmployee,
   TfieldTrainings,
+  useShowData,
 } from "../model/employee-model";
-import { FieldType, FormModal } from "@/components/ui/form-modal";
+// import { FieldType, FormModal } from "@/components/ui/form-modal";
 import enumClass, { EnumItem } from "@/lib/enumClass";
 import { errorValidation } from "@/lib/error-validation";
-import { useQuery } from "@tanstack/react-query";
+import { useQueries, useQuery } from "@tanstack/react-query";
 import { TrainingCard } from "@/components/ui/card-training";
 import SalaryCard from "@/components/ui/card-salary";
+import { Profile } from "@/components/ui/card-profile";
+import { FieldTypeEmployee, FormModal } from "../ui/employee-form";
+import { boolean } from "zod";
+import moment from "moment";
 const EmployeeDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const endPoint = `employees/${id}`;
+  const baseEndPoint = `employees/${id}`;
   const [data, setData] = useState<TfieldEmployee | null>(null);
   const [open, setOpen] = useState(false);
   const [editData, setEditData] = useState<TfieldEducation | null>(null);
+  const [profile, setProfile] = useState<TfieldEmployee | null>(null);
+  const [forms, setForms] = useState<FieldTypeEmployee[]>([]);
 
-  const [tabState, setTabState] = useState("");
-  const [options, setOptions] = useState<EnumItem[]>([]);
-  //  "degree": "Diploma",
-  // "major": "string",
-  // "institution_name": "string",
-  // "enrollment_year": "2019-08-24",
-  // "graduation_year": "2019-08-24",
-  // "gpa": 0
+  const [tabState, setTabState] = useState("overview");
+  const [contentState, setContentState] = useState({});
+  const [options, setOptions] = useState<OptionsType | null>(null);
+  const [profileQuery, contactsQuery, employmentQuery] = useShowData(baseEndPoint);
   const content = {
-    education: "educational-backgrounds",
+    education: {
+      type: "educational-backgrounds",
+      apiEndPoint: `${baseEndPoint}/educational-backgrounds`
+    },
     training: "trainings",
     salary_component: "salary-components",
+    employee: {
+      type: "employee",
+      apiEndPoint: `employees`
+    },
+    contacts: {
+      type: "contacts",
+      apiEndPoint: `${baseEndPoint}/contacts`
+    },
   };
 
-  const fields: FieldType[] = [
-    { name: "institution_name", label: "School", required: true },
-    {
-      name: "degree",
-      label: "Degree",
-      type: "select",
-      required: true,
-      options: options,
-    },
-    { name: "major", label: "Field of Study", required: true },
-    {
-      name: "enrollment_year",
-      label: "Start Date",
-      required: true,
-      type: "number",
-    },
-    {
-      name: "graduation_year",
-      label: "End Date",
-      required: true,
-      type: "number",
-    },
-    { name: "gpa", label: "Grade", required: true },
-  ];
+
 
   const { data: resultQuery } = useQuery({
     queryKey: [tabState],
 
     queryFn: async () => {
+
       if (tabState === "overview") {
-        return [];
+        // setTabState("contacts")
+
+        return []
       }
 
-      const response = await apiClient.get(`${endPoint}/${tabState}`);
+      const response = await apiClient.get(`${baseEndPoint}/${tabState}`);
 
       return response.data.data;
     },
   });
-  useEffect(() => {
-    enumClass.getList("enums/degree").then(setOptions);
-  }, []);
+
+  const { data: enums } = useQuery({
+    queryKey: ['enums'],
+
+    queryFn: async () => {
+
+
+      const response = await apiClient.get(`enums`);
+      // console.log("aa")
+
+      return response.data.data;
+    },
+  });
+
 
   useEffect(() => {
-    if (id) {
-      onShowData();
-    }
-  }, [id]);
+    // enumClass.getList("enums/degree").then(setOptions);
+    // console.log(enums)
+    setOptions(enums)
+  }, [enums]);
 
-  // useEffect(() => {
-  //   if (tabState) {
-  //     console.log("sini")
-  //     setDataEducation(resultQuery);
-  //     // onShowEducation();
-  //   }
-  // }, [tabState]);
 
-  const onShowData = async () => {
-    try {
-      const response = await apiClient.get(`${endPoint}`);
-      if (response.status == 200) {
-        setData(response.data.data);
-      }
-    } catch (err) {
-      const error = err as AxiosError;
-      toast.error(error.message);
-    }
-  };
 
-  // const onGenerateDataDetail = async (val: string) => {
-  //   try {
-  //     const response = await apiClient.get(`${endPoint}/${val}`);
-  //     if (response.status == 200) {
-  //       if (val) setDataEducation(response.data.data);
-  //     }
-  //   } catch (err) {
-  //     const error = err as AxiosError;
-  //     toast.error(error.message);
-  //   }
-  // };
-
-  const handleSubmit = async (data: TfieldEducation, setError: any) => {
+  const handleSubmit = async (data: any, setError: any) => {
+    console.log(data)
     const isEdit = !!editData;
     const method = isEdit ? "PUT" : "POST";
     const endpoint = isEdit
-      ? `${endPoint}/${editData?.id}/`
-      : `${endPoint}/educational-backgrounds`;
+      ? `${contentState.apiEndPoint}/${data.id ?? id}`
+      : `${contentState.apiEndPoint}`;
 
+    if (data.is_dependant && data.is_emergency_contact) {
+      data.is_dependant = normalizeValue(data.is_dependant, "boolean")
+      data.is_emergency_contact = normalizeValue(data.is_emergency_contact, "boolean")
+    }
     try {
       await apiClient({
         method,
         url: endpoint,
         data,
+
       });
 
       toast.success(`${isEdit ? "Edit" : "Create"} success`);
@@ -148,10 +133,39 @@ const EmployeeDetail: React.FC = () => {
       errorValidation(error, setError);
     }
   };
+  function normalizeValue(value: any, type?: string) {
+    if (type === "boolean") {
+      return value === "true" || value === true;
+    }
+    if (type === "number") {
+      return value !== "" ? Number(value) : null;
+    }
+    if (type === "date" && value) {
+      return moment(value).format("YYYY-MM-DD");
+    }
+    return value;
+  }
 
-  const handleEdit = (data: TfieldEducation) => {
+  const handleAction = (data: any, contents: {}) => {
     setEditData(data);
+    // setContents(content)
+    if (contents.type === content.employee.type) {
+      setForms(profielField(options))
+
+
+    } else if (contents.type === content.education.type) {
+      // console.log(options)
+      setForms(educationField(options))
+    }
+    else if (contents.type === content.contacts.type) {
+      // console.log(options)
+      setForms(contactsField(options))
+    }
+
+    console.log(data)
+    setContentState(contents)
     setOpen(true);
+
   };
 
   return (
@@ -178,7 +192,7 @@ const EmployeeDetail: React.FC = () => {
         <TabsList className="w-full grid grid-cols-5">
           <TabsTrigger value="overview">Overview</TabsTrigger>
 
-          <TabsTrigger value={content.education}>Education History</TabsTrigger>
+          <TabsTrigger value={content.education.type}>Education History</TabsTrigger>
           <TabsTrigger value="documents">My Documents</TabsTrigger>
           <TabsTrigger value={content.training}>Training</TabsTrigger>
           <TabsTrigger value={content.salary_component}>Salary</TabsTrigger>
@@ -188,7 +202,7 @@ const EmployeeDetail: React.FC = () => {
         <TabsContent value="overview">
           <main className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
             {/* Left: Personal Info */}
-            <Card className="p-4">
+            {/* <Card className="p-4">
               <CardHeader className="flex justify-between items-center mt-3">
                 <CardTitle>Informasi Pribadi</CardTitle>
               </CardHeader>
@@ -200,7 +214,7 @@ const EmployeeDetail: React.FC = () => {
                       alt="profile"
                       className="w-20 h-20 rounded-full"
                     />
-                    <h2 className="font-semibold">{data?.profile?.name}</h2>
+                    <h2 className="font-semibold">{profileQuery.data?.profile?.name}</h2>
                   </div>
                   <Button size="sm" variant="outline">
                     Edit
@@ -210,37 +224,46 @@ const EmployeeDetail: React.FC = () => {
                 <div className="mt-4 grid grid-cols-2 gap-x-6 gap-y-4 text-sm">
                   <div>
                     <p className="font-medium">Email</p>
-                    <p className="text-gray-600">{data?.email}</p>
+                    <p className="text-gray-600">{profileQuery.data?.email}</p>
                   </div>
                   <div>
                     <p className="font-medium">No. Telp</p>
-                    <p className="text-gray-600">{data?.phone}</p>
+                    <p className="text-gray-600">{profileQuery.data?.phone}</p>
                   </div>
                   <div>
                     <p className="font-medium">Alamat</p>
                     <p className="text-gray-600">
-                      {data?.profile?.legal_address}
+                      {profileQuery.data?.profile?.legal_address}
                     </p>
                   </div>
                   <div>
                     <p className="font-medium">Agama</p>
-                    <p className="text-gray-600">{data?.profile?.religion}</p>
+                    <p className="text-gray-600">{profileQuery.data?.profile?.religion}</p>
                   </div>
                   <div>
                     <p className="font-medium">Kewarganegaraan</p>
                     <p className="text-gray-600">
-                      {data?.profile?.citizenship}
+                      {profileQuery.data?.profile?.citizenship}
                     </p>
                   </div>
                   <div>
                     <p className="font-medium">Status Pernikahan</p>
                     <p className="text-gray-600">
-                      {data?.profile?.marital_status}
+                      {profileQuery.data?.profile?.marital_status}
                     </p>
                   </div>
                 </div>
               </CardContent>
-            </Card>
+            </Card> */}
+            <Profile
+
+              employe={profileQuery.data}
+
+              onEdit={(data) => {
+                handleAction(data, content.employee)
+
+              }}
+            />
 
             {/* Middle: Job Detail */}
             <div className="space-y-4">
@@ -255,41 +278,41 @@ const EmployeeDetail: React.FC = () => {
                   <div className="mt-4 grid grid-cols-2 gap-x-6 gap-y-4 text-sm">
                     <div>
                       <p className="font-medium">Employee-ID</p>
-                      <p className="text-gray-600">{data?.nip}</p>
+                      <p className="text-gray-600">{employmentQuery.data?.employee?.nip}</p>
                     </div>
                     <div>
                       <p className="font-medium">Status</p>
-                      <p className="text-green-600">{data?.status}</p>
+                      <p className="text-green-600">{employmentQuery?.data?.employee?.status}</p>
                     </div>
                     <div>
                       <p className="font-medium">Posisi</p>
-                      <p className="text-gray-600">Physiotherapist</p>
+                      <p className="text-gray-600">{employmentQuery?.data?.position?.name}</p>
                     </div>
                     <div>
                       <p className="font-medium">Departemen</p>
-                      <p className="text-gray-600">Physiotherapy</p>
+                      <p className="text-gray-600">{employmentQuery?.data?.group?.name}</p>
                     </div>
                     <div>
                       <p className="font-medium">Lokasi Kerja</p>
                       <p className="text-gray-600">
-                        Bernard tower, South Jakarta
+                        {employmentQuery?.data?.location}
                       </p>
                     </div>
                     <div>
                       <p className="font-medium">Tanggal Masuk</p>
-                      <p className="text-gray-600">28 Agustus 2023</p>
+                      <p className="text-gray-600"> {employmentQuery?.data?.start_date}</p>
                     </div>
                     <div>
                       <p className="font-medium">Durasi Kerja</p>
-                      <p className="text-gray-600">Sampai 28 Agustus 2024</p>
+                      <p className="text-gray-600"> {employmentQuery?.data?.end_date}</p>
                     </div>
                     <div>
                       <p className="font-medium">Grade</p>
-                      <p className="text-gray-600">Mid-Level</p>
+                      <p className="text-gray-600"> {employmentQuery?.data?.position?.level}</p>
                     </div>
                     <div>
                       <p className="font-medium">Jenis Karyawan</p>
-                      <p className="text-gray-600">{data?.type}</p>
+                      <p className="text-gray-600">{profileQuery?.data?.type}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -319,28 +342,27 @@ const EmployeeDetail: React.FC = () => {
             <Card className="p-4">
               <CardHeader className="flex justify-between items-center">
                 <CardTitle>Emergency Contacts</CardTitle>
-                <Button size="sm">+ Add contact</Button>
+                <Button size="sm" onClick={() => {
+                  handleAction(null, content.contacts)
+                }}
+                >+ Add contact</Button>
               </CardHeader>
-              <CardContent className="space-y-4 text-sm">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <p className="font-medium">Lyn Reno</p>
-                    <p className="text-gray-500">+62 234 24547 (Wife)</p>
+              {contactsQuery.data?.map(c => (
+                <CardContent key={c.id} className="space-y-4 text-sm">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="font-medium">{c.name}</p>
+                      <p className="text-gray-500">{c.phone}</p>
+                    </div>
+                    <Button size="sm" variant="outline" onClick={() => {
+                      handleAction(c, content.contacts)
+                    }}>
+                      Edit
+                    </Button>
                   </div>
-                  <Button size="sm" variant="outline">
-                    Contact
-                  </Button>
-                </div>
-                <div className="flex justify-between items-center">
-                  <div>
-                    <p className="font-medium">Joel Noel</p>
-                    <p className="text-gray-500">+62 234 24547 (Son)</p>
-                  </div>
-                  <Button size="sm" variant="outline">
-                    Contact
-                  </Button>
-                </div>
-              </CardContent>
+
+                </CardContent>
+              ))}
             </Card>
           </main>
         </TabsContent>
@@ -392,16 +414,17 @@ const EmployeeDetail: React.FC = () => {
         </TabsContent>
 
         {/* === Tab Education History === */}
-        <TabsContent value={content.education}>
+        <TabsContent value={content.education.type}>
           <div className="max-w-4xl mx-auto mt-6 justify-start">
             {resultQuery ? (
               <EducationHistory
                 education={resultQuery}
                 onAdd={() => {
-                  setEditData(null);
-                  setOpen(true);
+                  handleAction(null, content.education)
                 }}
-                onEdit={(i) => alert("Edit education index: " + i)}
+                onEdit={(data) => {
+                  handleAction(data, content.education)
+                }}
               />
             ) : (
               <Card className="p-4">
@@ -476,7 +499,7 @@ const EmployeeDetail: React.FC = () => {
           <main className="grid grid-cols-2 md:grid-cols-2 gap-6 ">
             <div className="p-6">
               {resultQuery ? (
-                <SalaryCard salary_components={resultQuery} employee_id={id}></SalaryCard>
+                <SalaryCard salaries={resultQuery} employee_id={id}></SalaryCard>
               ) : (
                 <Card className="p-4">
                   <CardContent>
@@ -517,7 +540,7 @@ const EmployeeDetail: React.FC = () => {
           setEditData(null);
         }}
         title={editData ? "Edit" : "Form Create"}
-        fields={fields}
+        fields={forms}
         defaultValues={editData ?? {}}
         onSubmit={handleSubmit}
         submitLabel={editData ? "Update" : "Save"}

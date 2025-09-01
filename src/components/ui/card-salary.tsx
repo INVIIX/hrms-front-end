@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -12,31 +13,48 @@ import {
 import { AxiosError } from "axios";
 import { toast } from "sonner";
 import apiClient from "@/lib/apiClient";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { TfieldSalary } from "@/modules/employee-data/model/employee-model";
 
 type SalaryItem = {
-  employee_id: number;
   salary_component_id: number;
   amount: number;
 };
 
+type salary_componentItem = {
+  id: string,
+  name: string,
+  type: string,
+  description: string
+};
+
 interface SalaryProps {
-  salary_components: SalaryItem[];
-  employee_id : string
+  salaries: TfieldSalary[]
+  employee_id?: string;
 }
 
-const SalaryCard: React.FC<SalaryProps> = ({ salary_components ,employee_id}) => {
-  const [salaries, setSalaries] = useState<SalaryItem[]>(salary_components);
+const SalaryCard: React.FC<SalaryProps> = ({ salaries, employee_id }) => {
+  const queryClient = useQueryClient();
 
+
+  // Ambil data salary
+  const { data: salary_componentItem = [], isLoading } = useQuery<salary_componentItem[]>({
+    queryKey: ["salary_componentItem"],
+    queryFn: async () => {
+      const res = await apiClient.get(`salary-components`);
+      return res.data.data || [];
+    },
+  });
+
+  //  console.log(salary_componentItem)
   const [batchForm, setBatchForm] = useState<SalaryItem[]>([
-    { employee_id: 0, salary_component_id: 0, amount: 0 },
+    { salary_component_id: 0, amount: 0 },
   ]);
 
   // Tambah baris form baru
   const addFormRow = () => {
-    setBatchForm([
-      ...batchForm,
-      { employee_id: 0, salary_component_id: 0, amount: 0 },
-    ]);
+    setBatchForm([...batchForm, { salary_component_id: 0, amount: 0 }]);
+    // console.log(salary_componentItem)
   };
 
   // Update field di baris tertentu
@@ -50,28 +68,39 @@ const SalaryCard: React.FC<SalaryProps> = ({ salary_components ,employee_id}) =>
     setBatchForm(newForm);
   };
 
-  // Simpan batch ke daftar salaries
-  const handleSaveBatch = async () => {
-    const method = "POST";
+  // Hapus baris form tertentu
+  const removeFormRow = (index: number) => {
+    const newForm = batchForm.filter((_, i) => i !== index);
+    setBatchForm(newForm.length ? newForm : [{ salary_component_id: 0, amount: 0 }]);
+  };
+
+  // Mutation untuk save batch
+  const mutation = useMutation({
+    mutationFn: async (payload: { salary_components: SalaryItem[] }) => {
+      return apiClient.post(
+        `employees/${employee_id}/salary-components/batch`,
+        payload
+      );
+    },
+    onSuccess: () => {
+      toast.success("Create Success");
+      // queryClient.invalidateQueries({ queryKey: ["salary-components", employee_id] });
+      setBatchForm([{ salary_component_id: 0, amount: 0 }]);
+    },
+    onError: (err) => {
+      const error = err as AxiosError;
+      toast.error(error.message);
+    },
+  });
+
+  const handleSaveBatch = () => {
     const validData = batchForm.filter(
       (item) => item.salary_component_id && item.amount
     );
     if (validData.length) {
-      setSalaries([...salaries, ...validData]);
-      setBatchForm([{ employee_id: 0, salary_component_id: 0, amount: 0 }]);
-    }
-    console.log(batchForm)
-
-    try {
-      apiClient({
-        method,
-        url: `employees/${employee_id}/salary-components/batch`,
-        batchForm,
-      });
-      toast.success("Create Success")
-    } catch (err) {
-      const error = err as AxiosError;
-      toast.error(error.message);
+      mutation.mutate({ salary_components: validData });
+    } else {
+      toast.error("Please fill all fields correctly");
     }
   };
 
@@ -81,25 +110,27 @@ const SalaryCard: React.FC<SalaryProps> = ({ salary_components ,employee_id}) =>
         <h2 className="text-lg font-bold">Salary Data</h2>
       </CardHeader>
       <CardContent>
-        {/* List Salary */}
-        <div className="space-y-3">
-          {salaries.map((item, index) => (
-            <div
-              key={index}
-              className="flex justify-between items-center rounded-lg border p-3"
-            >
-              <p className="text-sm">
-                <span className="font-medium">Component ID:</span>{" "}
-                {item.salary_component_id}
-              </p>
-              <p className="font-semibold text-blue-600">
-                Rp {item.amount.toLocaleString("id-ID")}
-              </p>
-            </div>
-          ))}
-        </div>
+        {isLoading ? (
+          <p>Loading...</p>
+        ) : (
+          <div className="space-y-3">
+            {salaries?.map((item, index) => (
+              <div
+                key={index}
+                className="flex justify-between items-center rounded-lg border p-3"
+              >
+                <p className="text-sm">
+                  <span className="font-medium"></span>{" "}
+                  {item.component.name}
+                </p>
+                <p className="font-semibold text-blue-600">
+                  Rp {item.amount.toLocaleString("id-ID")}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
 
-        {/* Tambah Data Batch */}
         <Dialog>
           <DialogTrigger asChild>
             <Button className="mt-4 w-full">+ Add Batch Salary</Button>
@@ -115,30 +146,28 @@ const SalaryCard: React.FC<SalaryProps> = ({ salary_components ,employee_id}) =>
                   key={index}
                   className="flex items-center gap-2 border p-2 rounded-lg"
                 >
-                  <Input
-                    type="number"
-                    placeholder="Employee ID"
-                    value={row.employee_id || ""}
-                    onChange={(e) =>
-                      updateFormRow(
-                        index,
-                        "employee_id",
-                        Number(e.target.value)
-                      )
+                  <Select
+                    onValueChange={(value) =>
+                      updateFormRow(index, "salary_component_id", Number(value))
                     }
-                  />
-                  <Input
-                    type="number"
-                    placeholder="Salary Component ID"
-                    value={row.salary_component_id || ""}
-                    onChange={(e) =>
-                      updateFormRow(
-                        index,
-                        "salary_component_id",
-                        Number(e.target.value)
-                      )
-                    }
-                  />
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Component" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {salary_componentItem.map((item) => (
+                        <SelectItem key={item.id} value={item.id}>
+                          <div className="flex flex-col w-full py-1">
+                            <span className="font-semibold text-gray-900">{item.name}</span>
+                            <div className="flex justify-between text-xs text-gray-500">
+                              <span>{item.type}</span>
+                          
+                            </div>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <Input
                     type="number"
                     placeholder="Amount"
@@ -147,6 +176,15 @@ const SalaryCard: React.FC<SalaryProps> = ({ salary_components ,employee_id}) =>
                       updateFormRow(index, "amount", Number(e.target.value))
                     }
                   />
+                  {batchForm.length > 1 && (
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      onClick={() => removeFormRow(index)}
+                    >
+                      X
+                    </Button>
+                  )}
                 </div>
               ))}
 
@@ -163,8 +201,9 @@ const SalaryCard: React.FC<SalaryProps> = ({ salary_components ,employee_id}) =>
                   type="button"
                   className="flex-1"
                   onClick={handleSaveBatch}
+                  disabled={mutation.isPending}
                 >
-                  Save Batch
+                  {mutation.isPending ? "Saving..." : "Save Batch"}
                 </Button>
               </div>
             </div>

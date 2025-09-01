@@ -25,6 +25,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getInitialName } from "../../../modules/auth/helpers/utils";
 import { NavLink } from "react-router";
 import { Separator } from "@/components/ui/separator";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { MobileBottomBar } from "./panel-bottombar";
 
 export function PanelSidebar({
   ...props
@@ -32,72 +34,123 @@ export function PanelSidebar({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { user, logout } = useAuth();
+  // console.log(user)
   const mainNavs = [
     {
       title: "Dashboard",
       icon: HomeIcon,
       url: "/",
+      roles: ["developer", "employee", "manager"],
     },
     {
       title: "User Management",
       icon: UserRoundPen,
       url: "/users",
+      roles: ["developer", "employee", "manager"]
     },
     {
       title: "Employees Data",
       icon: IdCardLanyard,
       url: "/employees",
+      roles: ["developer", "employee", "manager"]
     },
     {
       title: "Reporting Lines",
       icon: FileSymlink,
       url: "/lines",
+      roles: ["developer", "employee", "manager"]
     },
     {
       title: "Group Management",
       icon: Users,
       url: "/group",
+      roles: ["developer", "employee", "manager"]
     },
     {
       title: "Salaries",
       icon: HandCoins,
       url: "/salaries",
+      roles: ["developer", "employee", "manager"]
     },
     {
       title: "Loans Management",
       icon: BanknoteArrowDown,
       url: "/loans",
+      roles: ["developer", "employee", "manager"]
     },
     {
       title: "Leave",
       icon: UserRoundX,
       url: "/leave",
+      roles: ["developer", "employee", "manager"]
     },
     {
       title: "Invoices",
       icon: FileBadge,
       url: "/invoices",
+      roles: ["developer", "employee", "manager"]
     },
     {
       title: "KPI Management",
       icon: ChartPie,
       url: "/kpi",
+      roles: ["developer", "employee", "manager"]
     },
     {
       title: "Reports",
       icon: ChartSpline,
       url: "/report",
+      roles: ["developer", "employee", "manager"]
     },
     {
-        title: "Settings",
-        icon: CogIcon,
-        children: [
-            { title: "Group", url: "/settings/groups" },
-            { title: "Position", url: "/settings/positions" },
-            { title: "Salary Component", url: "/settings/salary-components" },
-        ],
+      title: "Settings",
+      icon: CogIcon,
+      roles: ["developer", "employee", "manager"],
+      children: [
+        { title: "Group", url: "/settings/groups" },
+        { title: "Position", url: "/settings/positions" },
+        { title: "Salary Component", url: "/settings/salary-components" },
+      ],
+    },
+    {
+      title: "Home",
+      icon: HomeIcon,
+      roles: ["adipermana", "employee", "manager"],
+      url: "/home",
+    },
+    {
+      title: "Attendance",
+      icon: HomeIcon,
+      roles: ["adipermana", "employee", "manager"],
+      url: "/attendance",
     },
   ];
+
+  const userRole = user?.name ?? "";
+  console.log(userRole)
+
+  // const filteredNavs = mainNavs.filter(nav => {
+  //   // Jika ada properti roles, cek apakah userRole termasuk
+  //   if (nav.roles && !nav.roles.includes(userRole)) {
+  //     return false;
+  //   }
+  //   return true;
+  // });
+  const filteredNavs = mainNavs
+    .map(nav => {
+      if (nav.children) {
+        const filteredChildren = nav.children.filter(child =>
+          !child.roles || child.roles.includes(userRole)
+        );
+        return { ...nav, children: filteredChildren };
+      }
+      return nav;
+    })
+    .filter(nav => {
+      if (nav.roles && !nav.roles.includes(userRole)) return false;
+      if (nav.children && nav.children.length === 0) return false;
+      return true;
+    });
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -128,7 +181,10 @@ export function PanelSidebar({
           </span>
         </div>
         <Separator />
-        <PanelSidebarMenu navTitle="Main Navigation" navs={mainNavs} />
+      
+          <PanelSidebarMenu navTitle="Main Navigation" navs={filteredNavs} />
+     
+       
         <div className="flex-1" />
       </SidebarContent>
 

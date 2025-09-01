@@ -35,7 +35,7 @@ export const SimpleModal = ({
       onClick={onClose}
     >
       <div
-        className={`relative bg-white rounded-md shadow-lg w-full max-w-${size} p-5 ${className}`}
+        className={`relative bg-white rounded-sm shadow-lg w-${size} max-w-${size} p-2 ${className}`}
         onClick={(e) => e.stopPropagation()}
       >
         <button

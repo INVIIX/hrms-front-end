@@ -1,7 +1,7 @@
 import React from "react";
 
 type SectionTitleWithDescProps = {
-  title: string;
+  title?: string;
   desc: string;
   icon?: React.ReactNode; // Tambahkan prop icon opsional
   className?: string;

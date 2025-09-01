@@ -8,7 +8,7 @@ import { TfieldEducation } from "@/modules/employee-data/model/employee-model";
 interface EducationHistoryProps {
   education: TfieldEducation[];
   onAdd?: () => void;
-  onEdit?: (index: number) => void;
+  onEdit?: (data: TfieldEducation) => void;
 }
 
 export const EducationHistory: React.FC<EducationHistoryProps> = ({
@@ -16,7 +16,6 @@ export const EducationHistory: React.FC<EducationHistoryProps> = ({
   onAdd,
   onEdit,
 }) => {
-    console.log(education)
   return (
     <Card className="p-4 shadow-sm">
       <CardHeader className="flex flex-row items-center justify-between">
@@ -55,7 +54,7 @@ export const EducationHistory: React.FC<EducationHistoryProps> = ({
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => onEdit?.(index)}
+                onClick={() => onEdit?.(item)}
               >
                 <Pencil className="w-4 h-4 mr-1" /> Edit
               </Button>

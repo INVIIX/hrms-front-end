@@ -1,7 +1,7 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, VariantProps } from "class-variance-authority"
-import { PanelLeftIcon } from "lucide-react"
+import { Clock, HandCoins, Home, PanelLeftIcon, Receipt } from "lucide-react"
 
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
@@ -22,6 +22,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import BottomBar from "../layouts/panel/panel-bottombar"
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
@@ -177,6 +178,28 @@ function Sidebar({
       </div>
     )
   }
+
+// if (isMobile) {
+//   const menu = [
+//     { icon: Home, isActive: true, url: "/home" },
+//     { icon: Clock, url: "/attendance" },
+//     { icon: HandCoins, url: "/coins" },
+//     { icon: Receipt, url: "/receipt" },
+//     { image: "https://randomuser.me/api/portraits/men/32.jpg" },
+//   ];
+
+//   return (
+//     <div className="h-screen flex flex-col">
+//       {/* Wrapper konten + padding agar tidak tertutup BottomBar */}
+//       <div className="h-full flex-1 overflow-auto">
+//          {props.children}{/* Konten halaman */}
+//       </div>
+//       <div className="h-auto">
+//         <BottomBar items={menu} />
+//       </div>
+//     </div>
+//   );
+// }
 
   if (isMobile) {
     return (
@@ -567,7 +590,7 @@ function SidebarMenuAction({
         "peer-data-[size=lg]/menu-button:top-2.5",
         "group-data-[collapsible=icon]:hidden",
         showOnHover &&
-          "peer-data-[active=true]/menu-button:text-sidebar-accent-foreground group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 md:opacity-0",
+        "peer-data-[active=true]/menu-button:text-sidebar-accent-foreground group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 md:opacity-0",
         className
       )}
       {...props}

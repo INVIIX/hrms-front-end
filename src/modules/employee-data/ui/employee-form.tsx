@@ -1,29 +1,35 @@
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller, FieldValues } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { SimpleModal } from "@/components/ui/simple-modal";
 import { EnumItem } from "@/lib/enumClass";
+import moment from "moment";
 
 export type FieldTypeEmployee = {
   name: string;
   label: string;
-  type?: "text" | "number" | "email" | "password" | "textarea" | "select" | "date";
+  type?: "text" | "number" | "email" | "password" | "textarea" | "select" | "date" | "boolean";
   placeholder?: string;
   options?: EnumItem[];
   required?: boolean;
   defaultValue?: any;
 };
 
-interface FormModalProps {
+interface FormModalProps<T extends FieldValues = any> {
   isOpen: boolean;
   onClose: () => void;
   title?: string;
   fields: FieldTypeEmployee[];
-  onSubmit: (data: any, setError: any) => void | Promise<void>;
+  onSubmit: (data: T, setError: any) => void | Promise<void>;
   submitLabel?: string;
   cancelLabel?: string;
-  defaultValues?: Record<string, any>;
+  defaultValues?: T;
 }
+
+const booleanOptions = [
+  { label: "Ya", value: true },
+  { label: "Tidak", value: false },
+];
 
 export const FormModal = ({
   isOpen,
@@ -33,21 +39,20 @@ export const FormModal = ({
   onSubmit,
   submitLabel = "Submit",
   cancelLabel = "Cancel",
-  defaultValues = {},
+  defaultValues = {} as any,
 }: FormModalProps) => {
   const {
+    control,
     register,
     handleSubmit,
     reset,
     setError,
     formState: { errors, isSubmitting },
-  } = useForm({ defaultValues });
+  } = useForm({ defaultValues, shouldUnregister: true });
 
-  // Reset form when modal opens with new defaultValues
+  // ✅ Reset form ketika modal open
   useEffect(() => {
-    if (isOpen) {
-      reset(defaultValues);
-    }
+    if (isOpen) reset(defaultValues);
   }, [isOpen, defaultValues, reset]);
 
   const handleClose = () => {
@@ -59,18 +64,18 @@ export const FormModal = ({
     try {
       await onSubmit(data, setError);
       handleClose();
-    } catch (err) {
-      // error handled inside onSubmit
+    } catch {
+      // error handled in onSubmit
     }
   };
 
   return (
-    <SimpleModal isOpen={isOpen} onClose={handleClose} size={"4xl"}>
-     
-        {title && <h2 className="text-xl font-semibold">{title}</h2>}
+    <SimpleModal isOpen={isOpen} onClose={handleClose} size="4xl">
+      <div className="max-h-[95vh] overflow-y-auto p-6">
+        {title && <h2 className="text-xl font-semibold mb-4">{title}</h2>}
 
         <form onSubmit={handleSubmit(submitForm)} className="space-y-4">
-           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 w-full">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 w-full">
             {fields.map((field) => (
               <div key={field.name} className="flex flex-col w-full">
                 <label className="mb-1 font-medium">{field.label}</label>
@@ -79,51 +84,50 @@ export const FormModal = ({
                   <textarea
                     {...register(field.name, { required: field.required })}
                     placeholder={field.placeholder}
-                     className="border px-3 py-2 rounded w-full"
-                    defaultValue={field.defaultValue}
-                    disabled={isSubmitting}
-                  />
-                ) : field.type === "select" && field.options ? (
-                  <select
-                    {...register(field.name, { required: field.required })}
-                    defaultValue={field.defaultValue || ""}
                     className="border px-3 py-2 rounded w-full"
                     disabled={isSubmitting}
-                  >
-                    <option value="">Pilih...</option>
-                    {field.options.map((opt) => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </option>
-                    ))}
-                  </select>
+                  />
+                ) : field.type === "select" || field.type === "boolean" ? (
+                  <Controller
+                    control={control}
+                    name={field.name}
+                    rules={{ required: field.required }}
+                    render={({ field: ctrl }) => (
+                      <select
+                        {...ctrl}
+                        className="border px-3 py-2 rounded w-full"
+                        disabled={isSubmitting}
+                      >
+                        <option value="">Pilih...</option>
+                        {(field.type === "boolean" ? booleanOptions : field.options || []).map(
+                          (opt) => (
+                            <option key={String(opt.value)} value={String(opt.value)}>
+                              {opt.label}
+                            </option>
+                          )
+                        )}
+                      </select>
+                    )}
+                  />
                 ) : (
                   <input
-                    type={field.type || "text"}
+                    type={field.type === "date" ? "date" : field.type || "text"}
                     {...register(field.name, { required: field.required })}
                     placeholder={field.placeholder}
                     className="border px-3 py-2 rounded w-full"
-                    defaultValue={field.defaultValue}
                     disabled={isSubmitting}
                   />
                 )}
 
                 {errors[field.name] && (
-                  <span className="text-sm text-red-500">
-                    {field.label} wajib diisi.
-                  </span>
+                  <span className="text-sm text-red-500">{field.label} wajib diisi.</span>
                 )}
               </div>
             ))}
           </div>
 
           <div className="flex justify-end gap-2 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleClose}
-              disabled={isSubmitting}
-            >
+            <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting}>
               {cancelLabel}
             </Button>
             <Button type="submit" disabled={isSubmitting}>
@@ -131,7 +135,7 @@ export const FormModal = ({
             </Button>
           </div>
         </form>
-   
+      </div>
     </SimpleModal>
   );
 };

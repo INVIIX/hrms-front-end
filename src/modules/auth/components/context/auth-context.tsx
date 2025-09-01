@@ -4,6 +4,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { TUser } from '../../helpers/types';
 import apiClient from '@/lib/apiClient';
 import { isRefreshing } from '@/lib/apiClient';
+import { TfieldEmployee } from '@/modules/employee-data/model/employee-model';
 
 const waitUntilNotRefreshing = () =>
     new Promise((resolve) => {
@@ -16,9 +17,9 @@ const waitUntilNotRefreshing = () =>
     });
 
 type AuthContextType = {
-    user: TUser | null;
+    user: TfieldEmployee | null;
     loading: boolean;
-    setUser: (user: TUser | null) => void;
+    setUser: (user: TfieldEmployee | null) => void;
     refreshUser: () => Promise<void>;
     logout: () => Promise<void>;
 };
@@ -42,7 +43,7 @@ const fetchUser = async () => {
 };
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-    const [user, setUser] = useState<TUser | null>(null);
+    const [user, setUser] = useState<TfieldEmployee | null>(null);
     const [loading, setLoading] = useState(true);
 
     const refreshUser = async () => {

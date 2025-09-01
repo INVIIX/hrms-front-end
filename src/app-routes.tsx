@@ -29,6 +29,9 @@ const SalaryIndexPage = lazy(() => import('./modules/master-data/salary/pages/sa
 const PositionIndexPage = lazy(() => import('./modules/master-data/positions/pages/position-index-page.tsx'));
 const EmployeIndexPage = lazy(() => import('./modules/employee-data/pages/employee-index-page.tsx'));
 const EmployeDetailPage = lazy(() => import('./modules/employee-data/pages/employee-detail-pages.tsx'));
+const UserHome = lazy(() => import('./modules/mobile/home/pages/home-pages.tsx'));
+const UserAttendance = lazy(() => import('./modules/mobile/attendance/pages/attendance-pages.tsx'));
+const UserProfile = lazy(() => import('./modules/mobile/profile/pages/profile-pages.tsx'));
 
 export default function AppRoutes() {
     return <>
@@ -55,12 +58,17 @@ export default function AppRoutes() {
                     <Route path="invoices" element={<Invoices />} />
                     <Route path="kpi" element={<KPIManagement />} />
                     <Route path="me" element={<AuthProfilePage />} />
+                    <Route path="home" element={<UserHome />} />
+                    <Route path="attendance" element={<UserAttendance />} />
+                    <Route path="profile" element={<UserProfile />} />
                     <Route path="settings">
                         <Route path="groups" element={<GroupIndexPage />} />
                         <Route path="salary-components" element={<SalaryIndexPage />} />
                         <Route path="positions" element={<PositionIndexPage />} />
                     </Route>
+                    
                     <Route path="*" element={<ErrorPage />} />
+
                 </Route>
             </Route>
         </Routes>
